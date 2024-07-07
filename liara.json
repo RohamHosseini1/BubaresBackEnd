@@ -1,0 +1,8 @@
+{
+  "platform": "node",
+  "app": "backend-bubares",
+  "port": 8000,
+  "node": {
+    "version": "20"
+  }
+}

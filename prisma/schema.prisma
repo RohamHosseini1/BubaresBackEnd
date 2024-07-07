@@ -1,0 +1,62 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// START: User model -----------------------------------------------------------------------------------
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  password String
+  email    String @unique
+  phone    String
+  role     Role   @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+// END: User model -----------------------------------------------------------------------------------
+
+// START: Attachment model -----------------------------------------------------------------------------------
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  key          String
+  originalName String
+  mimeType     String
+}
+
+// END: Attachment model -----------------------------------------------------------------------------------
+
+// START: Log model -------------------------------------------------------------------------------------
+model Log {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  type       String
+  url        String
+  method     String
+  statusCode Int
+  response   Json?
+  body       Json?
+  query      Json?
+  params     Json?
+  user       Json?
+  rawHeaders Json?
+  error      Json?
+}
+
+// END: Log model --------------------------------------------------------------------------------------
