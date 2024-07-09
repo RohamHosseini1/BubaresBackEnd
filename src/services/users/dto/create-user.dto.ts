@@ -14,7 +14,7 @@ export class CreateUserDto {
   @MinLength(5)
   @IsString()
   @IsOptional()
-  email: string
+  email?: string
 
   @IsStrongPassword({
     minLength: 8,
@@ -24,5 +24,5 @@ export class CreateUserDto {
     minSymbols: 0,
   })
   @IsOptional()
-  password: string
+  password?: string
 }

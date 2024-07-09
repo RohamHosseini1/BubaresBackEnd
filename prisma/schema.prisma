@@ -15,10 +15,12 @@ model User {
   updatedAt DateTime @updatedAt
 
   name     String
-  password String
-  email    String @unique
-  phone    String
-  role     Role   @default(USER)
+  password String?
+  email    String?  @unique
+  phone    String   @unique
+  role     Role     @default(USER)
+  OTPCode  OTPCode?
+  Order    Order[]
 }
 
 enum Role {
@@ -60,3 +62,96 @@ model Log {
 }
 
 // END: Log model --------------------------------------------------------------------------------------
+
+// START: FAQ model -----------------------------------------------------------------------------------
+model FAQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category FAQCategory @default(GENERAL)
+  question String
+  answer   String
+  linkText String
+  linkHref String
+}
+
+enum FAQCategory {
+  GENERAL
+}
+
+// END: FAQ model -----------------------------------------------------------------------------------
+
+// START: OTPCode model -----------------------------------------------------------------------------------
+model OTPCode {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  code      Int
+  expiredAt DateTime
+  userId    Int      @unique
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// END: OTPCode model -----------------------------------------------------------------------------------
+
+// START: Material model -----------------------------------------------------------------------------------
+model Material {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  unitPrice BigInt @default(0)
+  title     String
+}
+
+// END: Material model -----------------------------------------------------------------------------------
+
+// START: StructureFeature model -----------------------------------------------------------------------------------
+model StructureFeature {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  unitPrice BigInt @default(0)
+}
+
+// END: StructureFeature model -----------------------------------------------------------------------------------
+
+// START: BlogPost model -----------------------------------------------------------------------------------
+model BlogPost {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// END: BlogPost model -----------------------------------------------------------------------------------
+
+// START: Order model -----------------------------------------------------------------------------------
+model Order {
+  id        Int         @id @default(autoincrement())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  userId    Int
+  status    OrderStatus
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  SUCCESSFUL
+  CANCELLED
+}
+
+// END: Order model -----------------------------------------------------------------------------------
+
+// START: OrderRequest model -----------------------------------------------------------------------------------
+model OrderRequest {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// END: OrderRequest model -----------------------------------------------------------------------------------

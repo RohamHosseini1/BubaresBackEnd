@@ -18,7 +18,9 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    createUserDto.password = await bcrypt.hash(createUserDto.password, 10)
+    if (createUserDto.password) {
+      createUserDto.password = await bcrypt.hash(createUserDto.password, 10)
+    }
 
     const createdItem = await this.prisma.user
       .create({
@@ -59,7 +61,7 @@ export class UsersService {
     return foundItem
   }
 
-  async update(id: User['id'], updateUserDto: UpdateUserDto | { confirmed: boolean }) {
+  async update(id: User['id'], updateUserDto: UpdateUserDto) {
     if ('password' in updateUserDto && updateUserDto.password)
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10)
 
@@ -89,9 +91,6 @@ export class UsersService {
         select: {
           id: true,
           role: true,
-        },
-        omit: {
-          password: true,
         },
       })
       .catch(() => {

@@ -18,7 +18,7 @@ export class UsersController {
   }
 
   @Post()
-  @Public()
+  @UseGuards(IsAdminGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto)
   }
