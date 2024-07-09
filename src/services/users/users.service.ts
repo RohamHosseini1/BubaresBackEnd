@@ -97,7 +97,7 @@ export class UsersService {
         throw new UnauthorizedException()
       })
 
-    const codeMatch = data.code === '856123'
+    const codeMatch = data.code === 856123
     if (!codeMatch) throw new UnauthorizedException()
 
     const accessToken = await this.jwtService.signAsync(foundUser)

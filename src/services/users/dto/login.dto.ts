@@ -8,5 +8,5 @@ export class LoginDto {
   @Min(100000)
   @IsPositive()
   @IsInt()
-  code: string
+  code: number
 }
