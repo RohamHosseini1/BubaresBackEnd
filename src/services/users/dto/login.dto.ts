@@ -1,9 +1,12 @@
-import { IsString } from 'class-validator'
+import { IsInt, IsPositive, IsString, Max, Min } from 'class-validator'
 
 export class LoginDto {
   @IsString()
-  email: string
+  phone: string
 
-  @IsString()
-  password: string
+  @Max(999999)
+  @Min(100000)
+  @IsPositive()
+  @IsInt()
+  code: string
 }

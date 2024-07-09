@@ -14,6 +14,6 @@ export class AppService {
   }
 
   getHello(): string {
-    return 'Hello World!'
+    return 'Backend is up and running! 🍺'
   }
 }

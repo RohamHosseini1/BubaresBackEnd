@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { LoginDto } from './dto/login.dto'
 import { JwtService } from '@nestjs/jwt'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { AdminLoginDto } from './dto/admin-login.dto'
 
 @Injectable()
 export class UsersService {
@@ -79,7 +80,36 @@ export class UsersService {
     return updatedItem
   }
 
-  async returnUserInfoByCredentials(data: LoginDto) {
+  async userLogin(data: LoginDto) {
+    const foundUser = await this.prisma.user
+      .findUniqueOrThrow({
+        where: {
+          phone: data.phone,
+        },
+        select: {
+          id: true,
+          role: true,
+        },
+        omit: {
+          password: true,
+        },
+      })
+      .catch(() => {
+        throw new UnauthorizedException()
+      })
+
+    const codeMatch = data.code === '856123'
+    if (!codeMatch) throw new UnauthorizedException()
+
+    const accessToken = await this.jwtService.signAsync(foundUser)
+
+    return {
+      user: foundUser,
+      access: accessToken,
+    }
+  }
+
+  async adminLogin(data: AdminLoginDto) {
     const foundUser = await this.prisma.user
       .findUniqueOrThrow({
         where: {
@@ -105,7 +135,7 @@ export class UsersService {
     const accessToken = await this.jwtService.signAsync(jwtPayload)
 
     return {
-      user: jwtPayload,
+      admin: jwtPayload,
       access: accessToken,
     }
   }

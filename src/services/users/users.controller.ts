@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto'
 import { UsersService } from './users.service'
 import { Public } from 'src/guards/auth.guard'
 import { IsSuperAdminGuard } from 'src/guards/is-superadmin.guard'
+import { AdminLoginDto } from './dto/admin-login.dto'
 
 @Controller('users')
 export class UsersController {
@@ -44,6 +45,13 @@ export class UsersController {
   @Public()
   @HttpCode(200)
   login(@Body() loginDto: LoginDto) {
-    return this.usersService.returnUserInfoByCredentials(loginDto)
+    return this.usersService.userLogin(loginDto)
+  }
+
+  @Post('/login/admin')
+  @Public()
+  @HttpCode(200)
+  adminLogin(@Body() adminLoginDto: AdminLoginDto) {
+    return this.usersService.adminLogin(adminLoginDto)
   }
 }
