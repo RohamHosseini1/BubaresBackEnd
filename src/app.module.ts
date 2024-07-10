@@ -10,7 +10,7 @@ import { PrismaModule } from './prisma/prisma.module'
 import { ResponseLoggerInterceptor } from './services/my-logger/my-logger.service'
 import { UsersModule } from './services/users/users.module'
 import { AttachmentsModule } from './services/attachments/attachments.module'
-// import { AlarmRulesModule } from './services/boilerplate/boilerplate.module'
+import { FaqModule } from './services/faqs/faq.module'
 
 @Module({
   imports: [
@@ -24,6 +24,7 @@ import { AttachmentsModule } from './services/attachments/attachments.module'
     PrismaModule,
     UsersModule,
     AttachmentsModule,
+    FaqModule,
     // AlarmRulesModule,
   ],
   controllers: [AppController],

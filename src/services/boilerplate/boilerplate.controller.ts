@@ -1,19 +1,19 @@
 // import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 // import { BoilerplateService } from './boilerplate.service'
-// import { CreateAlarmRuleDto } from './dto/create-boilerplate.dto'
-// import { UpdateAlarmRuleDto } from './dto/update-boilerplate.dto'
+// import { CreateBoilerplateDto } from './dto/create-boilerplate.dto'
+// import { UpdateBoilerplateDto } from './dto/update-boilerplate.dto'
 
 // export interface IGetMyAlarmsFilters {
 //   unreadOnly: boolean
 // }
 
-// @Controller('alarm-rules')
+// @Controller('boilerplates')
 // export class BoilerplateController {
 //   constructor(private readonly boilerplateService: BoilerplateService) {}
 
 //   @Post()
-//   create(@Body() createAlarmRuleDto: CreateAlarmRuleDto) {
-//     return this.boilerplateService.create(createAlarmRuleDto)
+//   create(@Body() createBoilerplateDto: CreateBoilerplateDto) {
+//     return this.boilerplateService.create(createBoilerplateDto)
 //   }
 
 //   @Get()
@@ -22,8 +22,8 @@
 //   }
 
 //   @Patch(':id')
-//   update(@Param('id') id: string, @Body() updateAlarmRuleDto: UpdateAlarmRuleDto) {
-//     return this.boilerplateService.update(+id, updateAlarmRuleDto)
+//   update(@Param('id') id: string, @Body() updateBoilerplateDto: UpdateBoilerplateDto) {
+//     return this.boilerplateService.update(+id, updateBoilerplateDto)
 //   }
 
 //   @Delete(':id')
@@ -31,6 +31,6 @@
 //     return this.boilerplateService.remove(+id)
 //   }
 
-//   // @ApiOperation({ summary: 'Manually send alarms based on all AlarmRules' })
+//   // @ApiOperation({ summary: 'Manually send alarms based on all Boilerplates' })
 //   // @UseGuards(IsAdminGuard)
 // }

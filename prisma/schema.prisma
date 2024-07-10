@@ -74,6 +74,7 @@ model FAQ {
   answer   String
   linkText String
   linkHref String
+  position Int         @unique
 }
 
 enum FAQCategory {

@@ -6,7 +6,7 @@
 // export class BoilerplateService {
 //   constructor(private prisma: PrismaService) {}
 
-//   async create(data: CreateBoilerPlateDto) {
+//   async create(data: CreateBoilerplateDto) {
 //     const createdItem = await this.prisma.boilerplate
 //       .create({
 //         data,
@@ -19,10 +19,10 @@
 //   }
 
 //   async findAll() {
-//     return await this.prisma.user.findMany()
+//     return await this.prisma.boilerplate.findMany()
 //   }
 
-//   async update(id: number, data: UpdateBoilerPlateDto) {
+//   async update(id: number, data: UpdateBoilerplateDto) {
 //     const updatedItem = await this.prisma.boilerplate
 //       .update({
 //         where: {
