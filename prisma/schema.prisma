@@ -72,8 +72,8 @@ model FAQ {
   category FAQCategory
   question String
   answer   String
-  linkText String
-  linkHref String
+  linkText String?
+  linkHref String?
   position Int         @unique
   featured Boolean     @default(false)
 }

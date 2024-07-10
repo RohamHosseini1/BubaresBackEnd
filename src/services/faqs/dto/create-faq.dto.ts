@@ -1,5 +1,5 @@
 import { FAQCategory } from '@prisma/client'
-import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MinLength } from 'class-validator'
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsPositive, IsString, MinLength } from 'class-validator'
 
 export class CreateFAQDto {
   @IsEnum(FAQCategory)
@@ -15,14 +15,20 @@ export class CreateFAQDto {
 
   @MinLength(3)
   @IsString()
-  linkText: string
+  @IsOptional()
+  linkText?: string
 
   @MinLength(1)
   @IsString()
-  linkHref: string
+  @IsOptional()
+  linkHref?: string
 
   @IsPositive()
   @IsInt()
   @IsOptional()
   position: number
+
+  @IsBoolean()
+  @IsOptional()
+  featured?: boolean
 }
