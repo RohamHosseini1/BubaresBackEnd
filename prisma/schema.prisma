@@ -69,16 +69,21 @@ model FAQ {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  category FAQCategory @default(GENERAL)
+  category FAQCategory
   question String
   answer   String
   linkText String
   linkHref String
   position Int         @unique
+  featured Boolean     @default(false)
 }
 
 enum FAQCategory {
-  GENERAL
+  PRE_FABRICATED
+  ORDER_PROCESS
+  PAYMENT_TERMS
+  CONSTRUCTION_COST
+  PERMITS
 }
 
 // END: FAQ model -----------------------------------------------------------------------------------
@@ -103,8 +108,16 @@ model Material {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  unitPrice BigInt @default(0)
+  unitPrice BigInt        @default(0)
+  unit      MaterialUnits
   title     String
+}
+
+enum MaterialUnits {
+  KG
+  M
+  M2
+  M3
 }
 
 // END: Material model -----------------------------------------------------------------------------------
@@ -125,6 +138,11 @@ model BlogPost {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  slug      String @unique
+  title     String
+  shortBody String
+  body      String @db.Text
 }
 
 // END: BlogPost model -----------------------------------------------------------------------------------
