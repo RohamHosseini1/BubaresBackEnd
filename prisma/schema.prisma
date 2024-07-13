@@ -16,11 +16,14 @@ model User {
 
   name     String
   password String?
-  email    String?  @unique
-  phone    String   @unique
-  role     Role     @default(USER)
+  email    String? @unique
+  phone    String  @unique
+  role     Role    @default(USER)
+  jobTitle String?
+
   OTPCode  OTPCode?
   Order    Order[]
+  BlogPost BlogPost[]
 }
 
 enum Role {
@@ -36,9 +39,13 @@ model Attachment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
-  key          String
-  originalName String
-  mimeType     String
+  key                 String
+  originalName        String
+  mimeType            String
+  retaledBlogPostId   Int?
+  blogPostThumbnailId Int?   @unique
+
+  BlogPostThumnbail BlogPost? @relation(fields: [blogPostThumbnailId], references: [id])
 }
 
 // END: Attachment model -----------------------------------------------------------------------------------
@@ -139,13 +146,34 @@ model BlogPost {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  slug      String @unique
-  title     String
-  shortBody String
-  body      String @db.Text
+  slug       String  @unique
+  title      String
+  shortBody  String
+  body       String  @db.Text
+  userId     Int
+  ctaText    String?
+  ctaBtnText String?
+  ctaBtnHref String?
+
+  thumbnail      Attachment?
+  author         User           @relation(fields: [userId], references: [id])
+  blogCategories BlogCategory[]
 }
 
 // END: BlogPost model -----------------------------------------------------------------------------------
+
+// START: BlogCategory model -----------------------------------------------------------------------------------
+model BlogCategory {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String @unique
+
+  blogPosts BlogPost[]
+}
+
+// END: BlogCategory model -----------------------------------------------------------------------------------
 
 // START: Order model -----------------------------------------------------------------------------------
 model Order {
