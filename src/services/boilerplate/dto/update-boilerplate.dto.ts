@@ -1,4 +1,4 @@
 // import { PartialType } from '@nestjs/swagger'
-// import { CreateAlarmRuleDto } from './create-boilerplate.dto'
+// import { CreateBoilerplateDto } from './create-boilerplate.dto'
 
-// export class UpdateAlarmRuleDto extends PartialType(CreateAlarmRuleDto) {}
+// export class UpdateBoilerplateDto extends PartialType(CreateBoilerplateDto) {}

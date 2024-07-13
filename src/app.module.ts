@@ -11,6 +11,7 @@ import { ResponseLoggerInterceptor } from './services/my-logger/my-logger.servic
 import { UsersModule } from './services/users/users.module'
 import { AttachmentsModule } from './services/attachments/attachments.module'
 import { FaqModule } from './services/faqs/faq.module'
+import { MaterialModule } from './services/materials/material.module'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FaqModule } from './services/faqs/faq.module'
     UsersModule,
     AttachmentsModule,
     FaqModule,
+    MaterialModule,
     // AlarmRulesModule,
   ],
   controllers: [AppController],

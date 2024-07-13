@@ -1,7 +1,6 @@
-// import { AlarmRuleType } from '@prisma/client'
 // import { IsArray, IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
 
-// export class CreateAlarmRuleDto {
+// export class CreateBoilerplateDto {
 //   @IsEnum(AlarmRuleType)
 //   type: AlarmRuleType
 

@@ -110,7 +110,7 @@ model Material {
 
   unitPrice BigInt        @default(0)
   unit      MaterialUnits
-  title     String
+  title     String        @unique
 }
 
 enum MaterialUnits {

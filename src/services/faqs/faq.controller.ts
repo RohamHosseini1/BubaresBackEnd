@@ -3,10 +3,7 @@ import { FaqService } from './faq.service'
 import { CreateFAQDto } from './dto/create-faq.dto'
 import { UpdateFAQDto } from './dto/update-faq.dto'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
-
-export interface IGetMyAlarmsFilters {
-  unreadOnly: boolean
-}
+import { Public } from 'src/guards/auth.guard'
 
 @Controller('faqs')
 export class FaqController {
@@ -19,6 +16,7 @@ export class FaqController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.faqService.findAll()
   }

@@ -3,10 +3,6 @@
 // import { CreateBoilerplateDto } from './dto/create-boilerplate.dto'
 // import { UpdateBoilerplateDto } from './dto/update-boilerplate.dto'
 
-// export interface IGetMyAlarmsFilters {
-//   unreadOnly: boolean
-// }
-
 // @Controller('boilerplates')
 // export class BoilerplateController {
 //   constructor(private readonly boilerplateService: BoilerplateService) {}
