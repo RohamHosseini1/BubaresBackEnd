@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import * as moment from 'moment-jalaali'
 import { PrismaService } from './prisma/prisma.service'
+import { iranProvincesList } from 'constants/iranProvinces'
 
 @Injectable()
 export class AppService {
@@ -15,5 +16,9 @@ export class AppService {
 
   getHello(): string {
     return 'Backend is up and running! 🍺'
+  }
+
+  listProvinces() {
+    return iranProvincesList
   }
 }

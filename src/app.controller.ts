@@ -11,4 +11,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello()
   }
+
+  @Get('resources/provinces')
+  listProvinces() {
+    return this.appService.listProvinces()
+  }
 }

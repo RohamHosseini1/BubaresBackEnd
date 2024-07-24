@@ -115,9 +115,12 @@ model Material {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  unitPrice BigInt        @default(0)
-  unit      MaterialUnits
-  title     String        @unique
+  unitPrice   BigInt        @default(0)
+  unit        MaterialUnits
+  title       String        @unique
+  structureId Int?
+
+  structure Structure? @relation(fields: [structureId], references: [id])
 }
 
 enum MaterialUnits {
@@ -136,9 +139,55 @@ model StructureFeature {
   updatedAt DateTime @updatedAt
 
   unitPrice BigInt @default(0)
+  title     String
+
+  structure Structure[]
 }
 
 // END: StructureFeature model -----------------------------------------------------------------------------------
+
+// START: Facade model -----------------------------------------------------------------------------------
+model Facade {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  color        String
+  title        String
+  modelKey     String
+  thumbnailKey String
+  structureId  Int
+
+  structure Structure @relation(fields: [structureId], references: [id])
+}
+
+// END: Facade model -----------------------------------------------------------------------------------
+
+// START: Structure model -----------------------------------------------------------------------------------
+model Structure {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application  StructureApplications
+  floorsNumber Int
+  sizeFrom     Int
+  sizeTo       Int
+  province     Json
+
+  facades           Facade[]
+  materials         Material[]
+  structureFeatures StructureFeature[]
+}
+
+enum StructureApplications {
+  TOURISM
+  OFFICIAL
+  RESIDENTIAL
+  TREATMENT
+}
+
+// END: Structure model -----------------------------------------------------------------------------------
 
 // START: BlogPost model -----------------------------------------------------------------------------------
 model BlogPost {
