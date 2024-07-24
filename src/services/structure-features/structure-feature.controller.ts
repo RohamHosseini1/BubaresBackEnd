@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 import { StructureFeatureService } from './structure-feature.service'
 import { CreateStructureFeatureDto } from './dto/create-structure-feature.dto'
 import { UpdateStructureFeatureDto } from './dto/update-structure-features.dto'
+import { IsAdminGuard } from 'src/guards/is-admin.guard'
 
 @Controller('structure-features')
+@UseGuards(IsAdminGuard)
 export class StructureFeatureController {
   constructor(private readonly structureFeatureService: StructureFeatureService) {}
 
