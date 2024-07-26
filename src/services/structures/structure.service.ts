@@ -9,17 +9,30 @@ export class StructureService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateStructureDto) {
-    // const createdItem = await this.prisma.structure
-    //   .create({
-    //     data,
-    //   })
-    //   .catch((err) => {
-    //     throw new HandleException('Could not create.', 400, err)
-    //   })
+    const createdItem = await this.prisma.structure
+      .create({
+        data: {
+          ...data,
+          materials: {
+            createMany: {
+              data: data.materials,
+            },
+          },
+          structureFeatures: {
+            connect: data.structureFeatures.map((e) => ({ id: e })),
+          },
+          facades: {
+            createMany: {
+              data: data.facades,
+            },
+          },
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not create the structure.', 400, err)
+      })
 
-    // return createdItem
-
-    return data
+    return createdItem
   }
 
   async findAll() {

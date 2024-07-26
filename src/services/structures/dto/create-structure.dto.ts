@@ -7,11 +7,11 @@ import {
   IsDefined,
   IsEnum,
   IsInt,
-  IsNotEmpty,
   IsObject,
   IsOptional,
   IsPositive,
   IsString,
+  MaxLength,
   MinLength,
   Validate,
   ValidateNested,
@@ -60,12 +60,12 @@ export class CreateStructureDto {
   @IsArray()
   materials: MaterialDto[]
 
-  @IsString({ each: true })
+  @IsInt({ each: true })
   @IsDefined({ each: true })
   @ArrayNotEmpty()
   @IsArray()
   @IsOptional()
-  structureFeatures?: string[]
+  structureFeatures?: number[]
 
   @Type(() => FacadeDto)
   @ValidateNested()
@@ -77,10 +77,9 @@ export class CreateStructureDto {
 }
 
 class MaterialDto {
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(4)
-  materialId: string
+  @IsPositive()
+  @IsInt()
+  materialId: number
 
   @IsPositive()
   @IsInt()
@@ -88,27 +87,22 @@ class MaterialDto {
 }
 
 class FacadeDto {
+  @MaxLength(7)
+  @MinLength(6)
   @IsString()
-  @IsNotEmpty()
-  @MinLength(4)
   color: string
 
-  @IsString()
-  @IsNotEmpty()
   @MinLength(2)
+  @IsString()
   title: string
 
+  @MaxLength(41)
+  @MinLength(39)
   @IsString()
-  @IsNotEmpty()
-  @MinLength(10)
   modelKey: string
 
+  @MaxLength(41)
+  @MinLength(39)
   @IsString()
-  @IsNotEmpty()
-  @MinLength(10)
   thumbnailKey: string
-
-  @IsPositive()
-  @IsInt()
-  quantity: number
 }
