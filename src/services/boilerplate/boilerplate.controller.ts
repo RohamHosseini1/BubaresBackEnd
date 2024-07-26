@@ -8,8 +8,8 @@
 //   constructor(private readonly boilerplateService: BoilerplateService) {}
 
 //   @Post()
-//   create(@Body() createBoilerplateDto: CreateBoilerplateDto) {
-//     return this.boilerplateService.create(createBoilerplateDto)
+//   create(@Body() input: CreateBoilerplateDto) {
+//     return this.boilerplateService.create(input)
 //   }
 
 //   @Get()
@@ -18,8 +18,8 @@
 //   }
 
 //   @Patch(':id')
-//   update(@Param('id') id: string, @Body() updateBoilerplateDto: UpdateBoilerplateDto) {
-//     return this.boilerplateService.update(+id, updateBoilerplateDto)
+//   update(@Param('id') id: string, @Body() input: UpdateBoilerplateDto) {
+//     return this.boilerplateService.update(+id, input)
 //   }
 
 //   @Delete(':id')

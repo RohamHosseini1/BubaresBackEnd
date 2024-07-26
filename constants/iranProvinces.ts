@@ -123,4 +123,4 @@ export const iranProvincesList = [
     provinceName: 'يزد',
     provinceId: '21',
   },
-] as const
+]

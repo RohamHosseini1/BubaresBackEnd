@@ -115,12 +115,11 @@ model Material {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  unitPrice   BigInt        @default(0)
-  unit        MaterialUnits
-  title       String        @unique
-  structureId Int?
+  unit      MaterialUnits
+  unitPrice BigInt        @default(0)
+  title     String        @unique
 
-  structure Structure? @relation(fields: [structureId], references: [id])
+  StructureMaterial StructureMaterial[]
 }
 
 enum MaterialUnits {
@@ -145,6 +144,22 @@ model StructureFeature {
 }
 
 // END: StructureFeature model -----------------------------------------------------------------------------------
+
+// START: StructureMaterial model -----------------------------------------------------------------------------------
+model StructureMaterial {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quantity    Int
+  materialId  Int
+  structureId Int?
+
+  material  Material   @relation(fields: [materialId], references: [id])
+  Structure Structure? @relation(fields: [structureId], references: [id])
+}
+
+// END: StructureMaterial model -----------------------------------------------------------------------------------
 
 // START: Facade model -----------------------------------------------------------------------------------
 model Facade {
@@ -176,7 +191,7 @@ model Structure {
   province     Json
 
   facades           Facade[]
-  materials         Material[]
+  materials         StructureMaterial[]
   structureFeatures StructureFeature[]
 }
 

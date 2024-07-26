@@ -13,6 +13,7 @@ import { AttachmentsModule } from './services/attachments/attachments.module'
 import { FaqModule } from './services/faqs/faq.module'
 import { MaterialModule } from './services/materials/material.module'
 import { StructureFeatureModule } from './services/structure-features/structure-feature.module'
+import { StructureModule } from './services/structures/structure.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { StructureFeatureModule } from './services/structure-features/structure-
     FaqModule,
     MaterialModule,
     StructureFeatureModule,
+    StructureModule,
     // AlarmRulesModule,
   ],
   controllers: [AppController],
