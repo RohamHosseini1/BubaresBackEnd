@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common'
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import {
+  // APP_GUARD,
+  APP_INTERCEPTOR,
+} from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { AuthGuard } from './guards/auth.guard'
+// import { AuthGuard } from './guards/auth.guard'
 
 // modules
 import { PrismaModule } from './prisma/prisma.module'
@@ -14,6 +17,7 @@ import { ResponseLoggerInterceptor } from './services/my-logger/my-logger.servic
 import { StructureFeatureModule } from './services/structure-features/structure-feature.module'
 import { StructureModule } from './services/structures/structure.module'
 import { UsersModule } from './services/users/users.module'
+import { FacadesModule } from './services/facades/facades.module'
 
 @Module({
   imports: [
@@ -31,15 +35,16 @@ import { UsersModule } from './services/users/users.module'
     MaterialModule,
     StructureFeatureModule,
     StructureModule,
+    FacadesModule,
     // AlarmRulesModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseLoggerInterceptor,
