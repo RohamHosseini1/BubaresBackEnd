@@ -73,25 +73,27 @@ export class S3ClientService {
     }
   }
 
-  async deleteFacadeData(input: { key: string; type: 'MODEL' | 'THUMBNAIL' }) {
-    if (input.type === 'MODEL' && !input.key.startsWith(FACADE_MODELS_FOLDER_NAME))
-      throw new HandleException(`Key must start with ${FACADE_MODELS_FOLDER_NAME}...`, 400)
+  async deleteFacadeData(input: { key: string; type: 'MODEL' | 'THUMBNAIL' }, validateInput = true) {
+    if (validateInput) {
+      if (input.type === 'MODEL' && !input.key.startsWith(FACADE_MODELS_FOLDER_NAME))
+        throw new HandleException(`Key must start with ${FACADE_MODELS_FOLDER_NAME}...`, 400)
 
-    if (input.type === 'THUMBNAIL' && !input.key.startsWith(FACADE_THUMBNAIL_FOLDER_NAME))
-      throw new HandleException(`Key must start with ${FACADE_THUMBNAIL_FOLDER_NAME}...`, 400)
+      if (input.type === 'THUMBNAIL' && !input.key.startsWith(FACADE_THUMBNAIL_FOLDER_NAME))
+        throw new HandleException(`Key must start with ${FACADE_THUMBNAIL_FOLDER_NAME}...`, 400)
 
-    // remove bucket name
-    const finalFolderName = input.type === 'MODEL' ? FACADE_MODELS_FOLDER_NAME : FACADE_THUMBNAIL_FOLDER_NAME
-    let keyUuid = input.key.replace(finalFolderName, '')
+      // remove bucket name
+      const finalFolderName = input.type === 'MODEL' ? FACADE_MODELS_FOLDER_NAME : FACADE_THUMBNAIL_FOLDER_NAME
+      let keyUuid = input.key.replace(finalFolderName, '')
 
-    // remove extension
-    const lastDotIndex = keyUuid.lastIndexOf('.')
-    if (lastDotIndex !== -1) keyUuid = keyUuid.substring(0, lastDotIndex)
+      // remove extension
+      const lastDotIndex = keyUuid.lastIndexOf('.')
+      if (lastDotIndex !== -1) keyUuid = keyUuid.substring(0, lastDotIndex)
 
-    console.log(keyUuid)
+      // check if valid uuid
+      if (keyUuid.length !== 36) throw new HandleException(`Invalid UUID key, must be 36 chars.`, 400)
+    }
 
-    // check if valid uuid
-    if (keyUuid.length !== 36) throw new HandleException(`Invalid UUID key, must be 36 chars.`, 400)
+    console.log('reached here', input)
 
     const params = {
       Bucket: PUBLIC_BUCKET_NAME,

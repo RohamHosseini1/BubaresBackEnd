@@ -40,7 +40,7 @@ export class StructureController {
     if (!body.type || !['MODEL', 'THUMBNAIL'].includes(body.type))
       throw new HandleException(`Body must be either 'MODEL' | 'THUMBNAIL'`, 400)
 
-    return this.s3ClientService.deleteFacadeData(body)
+    return this.s3ClientService.deleteFacadeData(body, true)
   }
 
   @Patch(':id')
