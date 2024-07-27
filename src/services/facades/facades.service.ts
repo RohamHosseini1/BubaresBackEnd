@@ -10,6 +10,25 @@ export class FacadesService {
     private readonly s3ClientService: S3ClientService,
   ) {}
 
+  async getRandomFacade() {
+    const facadesCount = await this.prisma.facade.count()
+
+    if (facadesCount === 0) throw new HandleException('No facades available.', 404)
+
+    const randomSkip = Math.round(Math.random() * (facadesCount - 1))
+
+    const foundFacade = this.prisma.facade
+      .findMany({
+        take: 1,
+        skip: randomSkip,
+      })
+      .catch((err) => {
+        throw new HandleException('Could not find a random facade', 500, err)
+      })
+
+    return foundFacade
+  }
+
   async remove(id: number) {
     const deletedItem = await this.prisma.facade
       .delete({
