@@ -18,9 +18,11 @@ export class StructureService {
               data: data.materials,
             },
           },
-          structureFeatures: {
-            connect: data.structureFeatures.map((e) => ({ id: e })),
-          },
+          ...(data.structureFeatures && {
+            structureFeatures: {
+              connect: data.structureFeatures.map((e) => ({ id: e })),
+            },
+          }),
           facades: {
             createMany: {
               data: data.facades,
@@ -36,7 +38,34 @@ export class StructureService {
   }
 
   async findAll() {
-    return await this.prisma.structure.findMany()
+    return await this.prisma.structure.findMany({
+      include: {
+        structureFeatures: {
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        facades: {
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        materials: {
+          select: {
+            id: true,
+            material: {
+              omit: {
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            quantity: true,
+          },
+        },
+      },
+    })
   }
 
   async update(id: number, data: UpdateStructureDto) {

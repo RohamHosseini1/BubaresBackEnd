@@ -96,12 +96,12 @@ class FacadeDto {
   @IsString()
   title: string
 
-  @MaxLength(41)
+  @MaxLength(60)
   @MinLength(39)
   @IsString()
   modelKey: string
 
-  @MaxLength(41)
+  @MaxLength(60)
   @MinLength(39)
   @IsString()
   thumbnailKey: string
