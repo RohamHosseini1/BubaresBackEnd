@@ -1,6 +1,6 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import * as moment from 'moment'
+import moment from 'moment'
 import { Observable, throwError } from 'rxjs'
 import { catchError, tap } from 'rxjs/operators'
 import { PrismaService } from 'src/prisma/prisma.service'

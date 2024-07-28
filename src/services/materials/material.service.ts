@@ -36,7 +36,17 @@ export class MaterialService {
       } else {
         // check if old and new items area identical => don't update
         const foundCurrentItem = currentItems.find((e) => e.id === item.id)
-        if (foundCurrentItem && isEqual(foundCurrentItem, item)) continue
+        if (foundCurrentItem) {
+          delete foundCurrentItem.createdAt
+          delete foundCurrentItem.updatedAt
+
+          const normalizedCurrentItem = {
+            ...foundCurrentItem,
+            unitPrice: Number(foundCurrentItem.unitPrice),
+          }
+
+          if (isEqual(normalizedCurrentItem, item)) continue
+        }
 
         // update if any difference is detected
         await this.update(item.id, item)
