@@ -24,31 +24,23 @@ export class MaterialService {
   }
 
   async bulkCreate(data: CreateMaterialDto[]) {
-    const currentMaterials = await this.prisma.material.findMany()
+    const currentItems = await this.findAll()
     let createdRecords = 0
     let updatedRecords = 0
 
     for (const item of data) {
       if (!item.id) {
-        await this.prisma.material
-          .create({ data: item })
-          .then(() => {
-            createdRecords++
-          })
-          .catch((err) => {
-            throw new HandleException('Could not create the material record.', 500, err)
-          })
+        // if an item does not have id, it means it's new
+        await this.create(item)
+        createdRecords++
       } else {
-        const foundCurrentMaterial = currentMaterials.find((e) => e.id === item.id)
+        // check if old and new items area identical => don't update
+        const foundCurrentItem = currentItems.find((e) => e.id === item.id)
+        if (foundCurrentItem && isEqual(foundCurrentItem, item)) continue
 
-        if (foundCurrentMaterial && isEqual(foundCurrentMaterial, item)) continue
-
-        await this.prisma.material
-          .update({ where: { id: item.id }, data: item })
-          .then(() => {
-            updatedRecords++
-          })
-          .catch(() => {})
+        // update if any difference is detected
+        await this.update(item.id, item)
+        updatedRecords++
       }
     }
 
@@ -60,6 +52,8 @@ export class MaterialService {
   }
 
   async update(id: number, data: UpdateMaterialDto) {
+    delete data.id
+
     const updatedItem = await this.prisma.material
       .update({
         where: {

@@ -3,6 +3,7 @@ import { StructureFeatureService } from './structure-feature.service'
 import { CreateStructureFeatureDto } from './dto/create-structure-feature.dto'
 import { UpdateStructureFeatureDto } from './dto/update-structure-features.dto'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
+import { BulkCreateStructureFeatureDto } from './dto/bulk-create-structure-feature.dto'
 
 @Controller('structure-features')
 @UseGuards(IsAdminGuard)
@@ -12,6 +13,11 @@ export class StructureFeatureController {
   @Post()
   create(@Body() createStructureFeatureDto: CreateStructureFeatureDto) {
     return this.structureFeatureService.create(createStructureFeatureDto)
+  }
+
+  @Post('/bulk-create')
+  bulkCreate(@Body() input: BulkCreateStructureFeatureDto) {
+    return this.structureFeatureService.bulkCreate(input.features)
   }
 
   @Get()
