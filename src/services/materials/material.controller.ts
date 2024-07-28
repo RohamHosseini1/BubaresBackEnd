@@ -3,6 +3,7 @@ import { MaterialService } from './material.service'
 import { CreateMaterialDto } from './dto/create-material.dto'
 import { UpdateMaterialDto } from './dto/update-material.dto'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
+import { BulkCreateMaterialDto } from './dto/bulk-create-material.dto'
 
 @Controller('materials')
 @UseGuards(IsAdminGuard)
@@ -12,6 +13,11 @@ export class MaterialController {
   @Post()
   create(@Body() createMaterialDto: CreateMaterialDto) {
     return this.materialService.create(createMaterialDto)
+  }
+
+  @Post('/bulk-create')
+  bulkCreate(@Body() input: BulkCreateMaterialDto) {
+    return this.materialService.bulkCreate(input.materials)
   }
 
   @Get()

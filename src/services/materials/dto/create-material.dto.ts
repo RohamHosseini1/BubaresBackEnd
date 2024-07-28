@@ -1,7 +1,12 @@
 import { MaterialUnits } from '@prisma/client'
-import { IsEnum, IsNumber, IsOptional, IsString, Min, MinLength } from 'class-validator'
+import { IsEnum, IsInt, IsNumber, IsOptional, IsPositive, IsString, Min, MinLength } from 'class-validator'
 
 export class CreateMaterialDto {
+  @IsPositive()
+  @IsInt()
+  @IsOptional()
+  id?: number
+
   @IsEnum(MaterialUnits)
   unit: MaterialUnits
 

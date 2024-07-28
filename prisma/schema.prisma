@@ -138,7 +138,7 @@ model StructureFeature {
   updatedAt DateTime @updatedAt
 
   unitPrice BigInt @default(0)
-  title     String
+  title     String @unique
 
   structure Structure[]
 }
