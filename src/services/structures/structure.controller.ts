@@ -43,6 +43,11 @@ export class StructureController {
     return this.s3ClientService.deleteFacadeData(body, true)
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.structureService.findOne(+id)
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() input: UpdateStructureDto) {
     return this.structureService.update(+id, input)

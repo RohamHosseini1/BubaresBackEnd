@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards, Patch, HttpCode } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  Patch,
+  HttpCode,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -14,6 +25,8 @@ export class UsersController {
 
   @Get('/me')
   myInfo(@Req() request: Request) {
+    if (!request.user) throw new UnauthorizedException()
+
     return this.usersService.findOne(request.user.id)
   }
 
