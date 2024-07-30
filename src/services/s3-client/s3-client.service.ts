@@ -73,8 +73,8 @@ export class S3ClientService {
     }
   }
 
-  async deleteFacadeData(input: { key: string; type: 'MODEL' | 'THUMBNAIL' }, validateInput = true) {
-    if (validateInput) {
+  async deleteFacadeData(input: { key: string; type?: 'MODEL' | 'THUMBNAIL' }, validateInput = true) {
+    if (validateInput && input.type) {
       if (input.type === 'MODEL' && !input.key.startsWith(FACADE_MODELS_FOLDER_NAME))
         throw new HandleException(`Key must start with ${FACADE_MODELS_FOLDER_NAME}...`, 400)
 
@@ -92,8 +92,6 @@ export class S3ClientService {
       // check if valid uuid
       if (keyUuid.length !== 36) throw new HandleException(`Invalid UUID key, must be 36 chars.`, 400)
     }
-
-    console.log('reached here', input)
 
     const params = {
       Bucket: PUBLIC_BUCKET_NAME,

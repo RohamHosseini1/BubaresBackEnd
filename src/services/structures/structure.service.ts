@@ -5,6 +5,8 @@ import { CreateStructureDto } from './dto/create-structure.dto'
 import { UpdateStructureDto } from './dto/update-structure.dto'
 import { S3ClientService } from '../s3-client/s3-client.service'
 import { FacadesService } from '../facades/facades.service'
+import { excludeFromObject } from 'helpers/utils'
+import isEqual from 'lodash/isEqual'
 
 @Injectable()
 export class StructureService {
@@ -74,21 +76,147 @@ export class StructureService {
     })
   }
 
+  async handleUpdateStructureMaterials(item: Awaited<ReturnType<typeof this.findOne>>, data: UpdateStructureDto) {
+    const { materials: currentMaterials, id: currentStructureId } = item
+    const { materials: incomingMaterials } = data
+    const modifications = {
+      created: 0,
+      updated: 0,
+    }
+
+    for (const materialObj of incomingMaterials) {
+      if (!materialObj.id) {
+        // if an item does not have id, it means it's new
+        modifications.created++
+
+        await this.prisma.structureMaterial.create({
+          data: {
+            ...materialObj,
+            structureId: currentStructureId,
+          },
+        })
+      } else {
+        // check if old and new items area identical => don't update
+        const foundCurrentItem = currentMaterials.find((e) => e.id === materialObj.id)
+
+        if (foundCurrentItem) {
+          const normalizedCurrentItem = {
+            ...excludeFromObject(foundCurrentItem, ['material']),
+            materialId: foundCurrentItem.material.id,
+          }
+
+          if (isEqual(normalizedCurrentItem, materialObj)) continue
+        }
+
+        // update if any difference is detected
+        modifications.updated++
+        await this.prisma.structureMaterial.update({
+          where: {
+            id: materialObj.id,
+          },
+          data: materialObj,
+        })
+      }
+    }
+
+    return modifications
+  }
+
+  async handleUpdateStructureFacades(item: Awaited<ReturnType<typeof this.findOne>>, data: UpdateStructureDto) {
+    const { facades: currentFacades, id: currentStructureId } = item
+    const { facades: incomingFacades } = data
+    const modifications = {
+      created: 0,
+      updated: 0,
+      oldThumbnailDeleted: {},
+      oldModelDeleted: {},
+    }
+
+    for (const facadeObj of incomingFacades) {
+      if (!facadeObj.id) {
+        // if an item does not have id, it means it's new
+        modifications.created++
+
+        await this.prisma.facade.create({
+          data: {
+            ...facadeObj,
+            structureId: currentStructureId,
+          },
+        })
+      } else {
+        // check if old and new items area identical => don't update
+        const foundCurrentItem = currentFacades.find((e) => e.id === facadeObj.id)
+
+        if (foundCurrentItem) {
+          const normalizedCurrentItem = {
+            ...excludeFromObject(foundCurrentItem, ['structureId']),
+          }
+
+          if (isEqual(normalizedCurrentItem, facadeObj)) continue
+        }
+
+        // update if any difference is detected
+        modifications.updated++
+        await this.prisma.structureMaterial.update({
+          where: {
+            id: foundCurrentItem.id,
+          },
+          data: facadeObj,
+        })
+
+        // delete old object from the bucket if any change is detected
+        const promiseDeleteThumbnail =
+          foundCurrentItem.thumbnailKey !== facadeObj.thumbnailKey
+            ? this.s3ClientService.deleteFacadeData({ key: foundCurrentItem.thumbnailKey }, false)
+            : Promise.resolve({})
+
+        const promiseDeleteModel =
+          foundCurrentItem.modelKey !== facadeObj.modelKey
+            ? this.s3ClientService.deleteFacadeData({ key: foundCurrentItem.modelKey }, false)
+            : Promise.resolve({})
+
+        const result = await Promise.all([promiseDeleteThumbnail, promiseDeleteModel])
+        modifications.oldThumbnailDeleted = result[0]
+        modifications.oldModelDeleted = result[1]
+      }
+    }
+
+    return modifications
+  }
+
   async update(id: number, data: UpdateStructureDto) {
-    // const updatedItem = await this.prisma.structure
-    //   .update({
-    //     where: {
-    //       id,
-    //     },
-    //     data,
-    //   })
-    //   .catch((err) => {
-    //     throw new HandleException('Could not update', 500, err)
-    //   })
+    const foundItem = await this.findOne(id)
+    const metadata: {
+      materials?: Awaited<ReturnType<typeof this.handleUpdateStructureMaterials>>
+      facades?: Awaited<ReturnType<typeof this.handleUpdateStructureFacades>>
+    } = {}
 
-    // return updatedItem
+    if (data.materials) metadata.materials = await this.handleUpdateStructureMaterials(foundItem, data)
+    if (data.facades) metadata.facades = await this.handleUpdateStructureFacades(foundItem, data)
 
-    return data
+    const updatedItem = await this.prisma.structure
+      .update({
+        where: {
+          id,
+        },
+        data: {
+          ...excludeFromObject(data, ['facades', 'materials']),
+
+          ...(data.structureFeatures && {
+            structureFeatures: {
+              connect: data.structureFeatures.map((e) => ({ id: e })),
+            },
+          }),
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not update', 500, err)
+      })
+
+    return {
+      updatedItem,
+      metadata,
+    }
   }
 
   async findOne(id: number) {

@@ -79,6 +79,11 @@ export class CreateStructureDto {
 class MaterialDto {
   @IsPositive()
   @IsInt()
+  @IsOptional()
+  id?: number
+
+  @IsPositive()
+  @IsInt()
   materialId: number
 
   @IsPositive()
@@ -87,6 +92,11 @@ class MaterialDto {
 }
 
 class FacadeDto {
+  @IsPositive()
+  @IsInt()
+  @IsOptional()
+  id?: number
+
   @MaxLength(7)
   @MinLength(6)
   @IsString()

@@ -153,10 +153,10 @@ model StructureMaterial {
 
   quantity    Int
   materialId  Int
-  structureId Int?
+  structureId Int
 
-  material  Material   @relation(fields: [materialId], references: [id])
-  Structure Structure? @relation(fields: [structureId], references: [id])
+  material  Material  @relation(fields: [materialId], references: [id])
+  Structure Structure @relation(fields: [structureId], references: [id])
 }
 
 // END: StructureMaterial model -----------------------------------------------------------------------------------

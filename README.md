@@ -2,20 +2,17 @@
 
 ## Description
 
-This is a Nest.js / Prisma / MySql backend for Bubares admin panel.
-
-## Installation
-
-```bash
-$ pnpm install
-```
+This is a Nest.js / Prisma / MySql backend for Bubares website.
 
 ## Running the app
 
 ```bash
-# development mode
-$ pnpm dev
+# Install the dependencies
+$ pnpm install
 
-# production mode
-$ pnpm run start:prod
+# Build the project
+$ pnpm build
+
+# Run the start script
+$ pnpm start
 ```
