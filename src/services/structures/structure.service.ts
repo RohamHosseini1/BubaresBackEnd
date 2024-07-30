@@ -149,7 +149,7 @@ export class StructureService {
 
         if (foundCurrentItem) {
           const normalizedCurrentItem = {
-            ...excludeFromObject(foundCurrentItem, ['structureId']),
+            ...foundCurrentItem,
           }
 
           if (isEqual(normalizedCurrentItem, facadeObj)) continue
@@ -157,7 +157,7 @@ export class StructureService {
 
         // update if any difference is detected
         modifications.updated++
-        await this.prisma.structureMaterial.update({
+        await this.prisma.facade.update({
           where: {
             id: foundCurrentItem.id,
           },
@@ -236,18 +236,20 @@ export class StructureService {
             omit: {
               createdAt: true,
               updatedAt: true,
+              structureId: true,
             },
           },
           materials: {
             select: {
               id: true,
+              quantity: true,
+              materialId: true,
               material: {
                 omit: {
                   createdAt: true,
                   updatedAt: true,
                 },
               },
-              quantity: true,
             },
           },
         },
