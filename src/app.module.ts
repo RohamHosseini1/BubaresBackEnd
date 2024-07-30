@@ -1,12 +1,8 @@
 import { Module } from '@nestjs/common'
-import {
-  // APP_GUARD,
-  APP_INTERCEPTOR,
-} from '@nestjs/core'
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-// import { AuthGuard } from './guards/auth.guard'
 
 // modules
 import { PrismaModule } from './prisma/prisma.module'
@@ -18,6 +14,7 @@ import { StructureFeatureModule } from './services/structure-features/structure-
 import { StructureModule } from './services/structures/structure.module'
 import { UsersModule } from './services/users/users.module'
 import { FacadesModule } from './services/facades/facades.module'
+import { AuthGuard } from './guards/auth.guard'
 
 @Module({
   imports: [
@@ -41,10 +38,10 @@ import { FacadesModule } from './services/facades/facades.module'
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseLoggerInterceptor,
