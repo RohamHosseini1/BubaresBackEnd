@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { HandleException } from 'helpers/handle.exception'
 import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
-import { CreateOrderDto } from './dto/create-order.dto'
-import { UpdateOrderDto } from './dto/update-order.dto'
-// import { excludeFromObject } from 'helpers/utils'
+import { excludeFromObject } from 'helpers/utils'
 import { Order } from '@prisma/client'
+import { UserCreateOrderDto } from './dto/user-create-order.dto'
+import { UserUpdateOrderDto } from './dto/user-update-order.dto'
 
 @Injectable()
 export class OrdersService {
@@ -57,17 +57,34 @@ export class OrdersService {
     return deletedItem
   }
 
-  // async userCreate(data: CreateOrderDto) {
-  //   const createdItem = await this.prisma.order
-  //     .create({
-  //       data,
-  //     })
-  //     .catch((err) => {
-  //       throw new HandleException('Could not create.', 400, err)
-  //     })
+  async userCreate(data: UserCreateOrderDto) {
+    const createdItem = await this.prisma.order
+      .create({
+        data: {
+          ...excludeFromObject(data, ['phoneNumber']),
 
-  //   return createdItem
-  // }
+          user: {
+            connectOrCreate: {
+              where: {
+                phone: data.phoneNumber,
+              },
+              create: {
+                phone: data.phoneNumber,
+              },
+            },
+          },
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not create.', 400, err)
+      })
+
+    return {
+      status: 'SUCCESS',
+      message: 'order created successfully',
+      id: createdItem.id,
+    }
+  }
 
   async userFindAll(userId: number, paginateOptions: PaginateOptions) {
     const paginatedResult = await PrismaService.paginate<Order>(this.prisma.order, paginateOptions, {
@@ -79,22 +96,31 @@ export class OrdersService {
     return paginatedResult
   }
 
-  // async userUpdate(id: number, data: UpdateOrderDto) {
-  //   const finalData = excludeFromObject(data, ['province', 'floorsNumber', 'size', 'application'])
+  async userUpdate(id: string, data: UserUpdateOrderDto) {
+    const updatedItem = await this.prisma.order
+      .update({
+        where: {
+          id,
+        },
+        data: {
+          ...data,
 
-  //   const updatedItem = await this.prisma.order
-  //     .update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: finalData,
-  //     })
-  //     .catch((err) => {
-  //       throw new HandleException('Could not update', 500, err)
-  //     })
+          ...(data.structureFeatures && {
+            structureFeatures: {
+              connect: data.structureFeatures.map((e) => ({ id: e })),
+            },
+          }),
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not update', 500, err)
+      })
 
-  //   return updatedItem
-  // }
+    return {
+      status: 'SUCCESS',
+      id: updatedItem.id,
+    }
+  }
 
   async userRemove(userId: number, orderId: string) {
     const foundOrder = await this.prisma.order
