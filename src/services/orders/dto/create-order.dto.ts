@@ -1,6 +1,11 @@
-import { IsArray, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
+import { StructureApplications } from '@prisma/client'
+import { IsArray, IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class CreateOrderDto {
+  @IsEnum(StructureApplications)
+  category: StructureApplications
+
+  // ---
   @IsPositive()
   @IsInt()
   @IsOptional()

@@ -25,7 +25,7 @@ export class S3ClientService {
 
   async getUploadFacadeDataUrl() {
     const modelKey = FACADE_MODELS_FOLDER_NAME + uuidv4() + '.glb'
-    const thumbnailKey = FACADE_THUMBNAIL_FOLDER_NAME + uuidv4() + '.jpg'
+    const thumbnailKey = FACADE_THUMBNAIL_FOLDER_NAME + uuidv4() + '.png'
 
     const modelUploadUrl = await getSignedUrl(
       this.s3Client,
@@ -44,7 +44,7 @@ export class S3ClientService {
       new PutObjectCommand({
         Bucket: PUBLIC_BUCKET_NAME,
         Key: thumbnailKey,
-        ContentType: 'image/jpg',
+        ContentType: 'image/png',
       }),
       {
         expiresIn: 3600, // in seconds
@@ -65,8 +65,8 @@ export class S3ClientService {
         uploadUrl: thumbnailUploadUrl,
         key: thumbnailKey,
         allowedFile: {
-          extension: '.jpg',
-          contentType: 'image/jpg',
+          extension: '.png',
+          contentType: 'image/png',
         },
         expiresInSeconds: 3600,
       },
