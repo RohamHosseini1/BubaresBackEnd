@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
 import { StructureService } from './structure.service'
 import { CreateStructureDto } from './dto/create-structure.dto'
 import { UpdateStructureDto } from './dto/update-structure.dto'
@@ -21,8 +21,10 @@ export class StructureController {
   }
 
   @Get()
-  findAll() {
-    return this.structureService.findAll()
+  findAll(@Query('page') page: string, @Query('perPage') perPage: string) {
+    const paginateOptions = { page, perPage }
+
+    return this.structureService.findAll(paginateOptions)
   }
 
   @ApiOperation({ summary: 'Getting the upload link of both 3d model and its thumbnail to the s3 bucket' })

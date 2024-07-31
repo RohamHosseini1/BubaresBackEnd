@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { HandleException } from 'helpers/handle.exception'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
 import { CreateStructureDto } from './dto/create-structure.dto'
 import { UpdateStructureDto } from './dto/update-structure.dto'
 import { S3ClientService } from '../s3-client/s3-client.service'
 import { FacadesService } from '../facades/facades.service'
 import { excludeFromObject } from 'helpers/utils'
 import isEqual from 'lodash/isEqual'
+import { Structure } from '@prisma/client'
 
 @Injectable()
 export class StructureService {
@@ -45,8 +46,8 @@ export class StructureService {
     return createdItem
   }
 
-  async findAll() {
-    return await this.prisma.structure.findMany({
+  async findAll(paginateOptions: PaginateOptions) {
+    const paginatedResult = await PrismaService.paginate<Structure>(this.prisma.structure, paginateOptions, {
       include: {
         structureFeatures: {
           omit: {
@@ -74,6 +75,8 @@ export class StructureService {
         },
       },
     })
+
+    return paginatedResult
   }
 
   async handleUpdateStructureMaterials(item: Awaited<ReturnType<typeof this.findOne>>, data: UpdateStructureDto) {

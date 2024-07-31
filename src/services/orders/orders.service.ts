@@ -69,7 +69,7 @@ export class OrdersService {
   //   return createdItem
   // }
 
-  async userFindAll(userId: number, paginateOptions) {
+  async userFindAll(userId: number, paginateOptions: PaginateOptions) {
     const paginatedResult = await PrismaService.paginate<Order>(this.prisma.order, paginateOptions, {
       where: {
         userId,
