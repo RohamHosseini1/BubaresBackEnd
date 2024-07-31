@@ -14,16 +14,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name     String
-  password String?
-  email    String? @unique
   phone    String  @unique
   role     Role    @default(USER)
+  name     String?
+  password String?
+  email    String? @unique
   jobTitle String?
 
-  OTPCode  OTPCode?
-  Order    Order[]
-  BlogPost BlogPost[]
+  OTPCode   OTPCode?
+  Orders    Order[]
+  BlogPosts BlogPost[]
 }
 
 enum Role {
@@ -140,7 +140,9 @@ model StructureFeature {
   unitPrice BigInt @default(0)
   title     String @unique
 
-  structure Structure[]
+  structure      Structure[]
+  Order          Order[]
+  orderRequestId String?
 }
 
 // END: StructureFeature model -----------------------------------------------------------------------------------
@@ -174,6 +176,7 @@ model Facade {
   structureId  Int
 
   structure Structure @relation(fields: [structureId], references: [id])
+  Orders    Order[]
 }
 
 // END: Facade model -----------------------------------------------------------------------------------
@@ -241,13 +244,25 @@ model BlogCategory {
 
 // START: Order model -----------------------------------------------------------------------------------
 model Order {
-  id        Int         @id @default(autoincrement())
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  userId    Int
-  status    OrderStatus
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  application       StructureApplications
+  floorsNumber      Int
+  size              Int
+  province          Json
+  userId            Int
+  city              String?
+  village           String?
+  neighborhood      String?
+  facadeTitle       String?
+  facadeId          Int?
+  structureFeatures StructureFeature[]
+  status            OrderStatus           @default(PENDING)
+
+  facade Facade? @relation(fields: [facadeId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
 }
 
 enum OrderStatus {
@@ -257,12 +272,3 @@ enum OrderStatus {
 }
 
 // END: Order model -----------------------------------------------------------------------------------
-
-// START: OrderRequest model -----------------------------------------------------------------------------------
-model OrderRequest {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// END: OrderRequest model -----------------------------------------------------------------------------------

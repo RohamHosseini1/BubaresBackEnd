@@ -114,12 +114,9 @@ export class UsersService {
         where: {
           email: data.email,
         },
-        select: {
-          id: true,
-          role: true,
-
-          // will be deleted later
-          password: true,
+        omit: {
+          createdAt: true,
+          updatedAt: true,
         },
       })
       .catch(() => {
