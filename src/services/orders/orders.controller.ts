@@ -59,7 +59,7 @@ export class OrdersController {
   @Delete(':id')
   @UseGuards(IsAdminGuard)
   adminRemove(@Param('id') id: string) {
-    return this.ordersService.adminRemove(+id)
+    return this.ordersService.adminRemove(id)
   }
 
   // @Patch('/me/:id')
@@ -72,7 +72,7 @@ export class OrdersController {
   userRemove(@Req() request: Request, @Param('id') id: string) {
     if (!request.user) return new UnauthorizedException()
 
-    return this.ordersService.userRemove(request.user.id, +id)
+    return this.ordersService.userRemove(request.user.id, id)
   }
 
   // @ApiOperation({ summary: 'Manually send alarms based on all Orders' })

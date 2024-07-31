@@ -43,7 +43,7 @@ export class OrdersService {
   //   return updatedItem
   // }
 
-  async adminRemove(id: number) {
+  async adminRemove(id: string) {
     const deletedItem = await this.prisma.order
       .delete({
         where: {
@@ -96,7 +96,7 @@ export class OrdersService {
   //   return updatedItem
   // }
 
-  async userRemove(userId: number, orderId: number) {
+  async userRemove(userId: number, orderId: string) {
     const foundOrder = await this.prisma.order
       .findUniqueOrThrow({
         where: {
