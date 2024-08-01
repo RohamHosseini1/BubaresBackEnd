@@ -141,9 +141,8 @@ model StructureFeature {
   title       String  @unique
   description String?
 
-  structure      Structure[]
-  Order          Order[]
-  orderRequestId String?
+  structure Structure[]
+  Order     Order[]
 }
 
 // END: StructureFeature model -----------------------------------------------------------------------------------

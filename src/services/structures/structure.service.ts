@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Structure } from '@prisma/client'
+import { Structure, StructureApplications } from '@prisma/client'
 import { HandleException } from 'helpers/handle.exception'
 import { excludeFromObject } from 'helpers/utils'
 import isEqual from 'lodash/isEqual'
@@ -20,13 +20,36 @@ export class StructureService {
   ) {}
 
   async suggestStructure(data: Partial<UserCreateOrderDto & UserUpdateOrderDto>) {
-    const result = await this.prisma.structure.findMany()
+    let result = await this.prisma.structure.findMany({
+      include: {
+        facades: { select: { id: true, thumbnailKey: true, modelKey: true } },
+        structureFeatures: { omit: { id: true, createdAt: true, updatedAt: true } },
+        materials: { select: { quantity: true, material: { select: { unitPrice: true, title: true } } } },
+      },
+    })
 
-    // if (data.application) {
-    //   result = result.filter((e) => e.application)
-    // }
+    const fallbackStructure = result[Math.round(Math.random() * (result.length - 1))]
 
-    return result[0]
+    if (data.application) {
+      const filtered = result.filter((e) => (e.application as StructureApplications[]).includes(data.application))
+      if (filtered.length > 0) result = filtered
+    }
+
+    if (data.floorsNumber) {
+      const filtered = result.filter((e) => e.floorsNumber === data.floorsNumber)
+      if (filtered.length > 0) result = filtered
+    }
+
+    if (data.size) {
+      const filtered = result.filter((e) => e.sizeFrom < data.size && e.sizeTo > data.size)
+      if (filtered.length > 0) result = filtered
+    }
+
+    if (result.length === 0) return fallbackStructure
+    if (result.length === 1) return result[0]
+    if (result.length > 1) return result[Math.round(Math.random() * (result.length - 1))]
+
+    return new HandleException('Something went wrong!', 500)
   }
 
   async create(data: CreateStructureDto) {
