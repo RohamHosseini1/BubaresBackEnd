@@ -16,16 +16,18 @@ import { Public } from 'src/guards/auth.guard'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
 import { UserUpdateOrderDto } from './dto/user-update-order.dto'
 import { UserCreateOrderDto } from './dto/user-create-order.dto'
+import { AdminCreateOrderDto } from './dto/admin-create-order.dto'
+import { AdminUpdateOrderDto } from './dto/admin-update-order.dto'
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  // @Post()
-  // @UseGuards(IsAdminGuard)
-  // adminCreate(@Body() input: CreateOrderDto) {
-  //   return this.ordersService.adminCreate(input)
-  // }
+  @Post()
+  @UseGuards(IsAdminGuard)
+  adminCreate(@Body() input: AdminCreateOrderDto) {
+    return this.ordersService.adminCreate(input)
+  }
 
   @Get()
   @UseGuards(IsAdminGuard)
@@ -50,11 +52,11 @@ export class OrdersController {
     return this.ordersService.userFindAll(request.user.id, paginateOptions)
   }
 
-  // @Patch(':id')
-  // @UseGuards(IsAdminGuard)
-  // adminUpdate(@Param('id') id: string, @Body() input: UpdateOrderDto) {
-  //   return this.ordersService.adminUpdate(+id, input)
-  // }
+  @Patch(':id')
+  @UseGuards(IsAdminGuard)
+  adminUpdate(@Param('id') id: string, @Body() input: AdminUpdateOrderDto) {
+    return this.ordersService.adminUpdate(id, input)
+  }
 
   @Delete(':id')
   @UseGuards(IsAdminGuard)

@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
+import { Structure } from '@prisma/client'
 import { HandleException } from 'helpers/handle.exception'
-import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
-import { CreateStructureDto } from './dto/create-structure.dto'
-import { UpdateStructureDto } from './dto/update-structure.dto'
-import { S3ClientService } from '../s3-client/s3-client.service'
-import { FacadesService } from '../facades/facades.service'
 import { excludeFromObject } from 'helpers/utils'
 import isEqual from 'lodash/isEqual'
-import { Structure } from '@prisma/client'
+import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
+import { FacadesService } from '../facades/facades.service'
+import { UserCreateOrderDto } from '../orders/dto/user-create-order.dto'
+import { UserUpdateOrderDto } from '../orders/dto/user-update-order.dto'
+import { S3ClientService } from '../s3-client/s3-client.service'
+import { CreateStructureDto } from './dto/create-structure.dto'
+import { UpdateStructureDto } from './dto/update-structure.dto'
 
 @Injectable()
 export class StructureService {
@@ -16,6 +18,16 @@ export class StructureService {
     private readonly s3ClientService: S3ClientService,
     private readonly facadeService: FacadesService,
   ) {}
+
+  async suggestStructure(data: Partial<UserCreateOrderDto & UserUpdateOrderDto>) {
+    const result = await this.prisma.structure.findMany()
+
+    // if (data.application) {
+    //   result = result.filter((e) => e.application)
+    // }
+
+    return result[0]
+  }
 
   async create(data: CreateStructureDto) {
     const createdItem = await this.prisma.structure

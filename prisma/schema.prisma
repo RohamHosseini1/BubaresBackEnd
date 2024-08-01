@@ -137,8 +137,9 @@ model StructureFeature {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  unitPrice BigInt @default(0)
-  title     String @unique
+  unitPrice   BigInt  @default(0)
+  title       String  @unique
+  description String?
 
   structure      Structure[]
   Order          Order[]
@@ -187,7 +188,7 @@ model Structure {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  application  StructureApplications
+  application  Json // an array of StructureApplications
   floorsNumber Int
   sizeFrom     Int
   sizeTo       Int

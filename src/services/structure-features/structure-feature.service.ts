@@ -10,6 +10,8 @@ export class StructureFeatureService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateStructureFeatureDto) {
+    delete data.id
+
     const createdItem = await this.prisma.structureFeature
       .create({
         data,

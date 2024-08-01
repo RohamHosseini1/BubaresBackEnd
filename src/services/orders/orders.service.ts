@@ -5,22 +5,47 @@ import { excludeFromObject } from 'helpers/utils'
 import { Order } from '@prisma/client'
 import { UserCreateOrderDto } from './dto/user-create-order.dto'
 import { UserUpdateOrderDto } from './dto/user-update-order.dto'
+import { AdminCreateOrderDto } from './dto/admin-create-order.dto'
+import { AdminUpdateOrderDto } from './dto/admin-update-order.dto'
+import { StructureService } from '../structures/structure.service'
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly structureService: StructureService,
+  ) {}
 
-  // async adminCreate(data: CreateOrderDto) {
-  //   const createdItem = await this.prisma.order
-  //     .create({
-  //       data,
-  //     })
-  //     .catch((err) => {
-  //       throw new HandleException('Could not create.', 400, err)
-  //     })
+  async adminCreate(data: AdminCreateOrderDto) {
+    const createdItem = await this.prisma.order
+      .create({
+        data: {
+          ...excludeFromObject(data, ['phoneNumber']),
 
-  //   return createdItem
-  // }
+          user: {
+            connectOrCreate: {
+              where: {
+                phone: data.phoneNumber,
+              },
+              create: {
+                phone: data.phoneNumber,
+              },
+            },
+          },
+
+          ...(data.structureFeatures && {
+            structureFeatures: {
+              connect: data.structureFeatures.map((e) => ({ id: e })),
+            },
+          }),
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not create.', 400, err)
+      })
+
+    return createdItem
+  }
 
   async adminFindAll(paginateOptions: PaginateOptions) {
     const paginatedResult = await PrismaService.paginate<Order>(this.prisma.order, paginateOptions)
@@ -28,20 +53,41 @@ export class OrdersService {
     return paginatedResult
   }
 
-  // async adminUpdate(id: number, data: UpdateOrderDto) {
-  //   const updatedItem = await this.prisma.order
-  //     .update({
-  //       where: {
-  //         id,
-  //       },
-  //       data,
-  //     })
-  //     .catch((err) => {
-  //       throw new HandleException('Could not update', 500, err)
-  //     })
+  async adminUpdate(id: string, data: AdminUpdateOrderDto) {
+    const updatedItem = await this.prisma.order
+      .update({
+        where: {
+          id,
+        },
+        data: {
+          ...excludeFromObject(data, ['phoneNumber']),
 
-  //   return updatedItem
-  // }
+          ...(data.phoneNumber && {
+            user: {
+              connectOrCreate: {
+                where: {
+                  phone: data.phoneNumber,
+                },
+                create: {
+                  phone: data.phoneNumber,
+                },
+              },
+            },
+          }),
+
+          ...(data.structureFeatures && {
+            structureFeatures: {
+              connect: data.structureFeatures.map((e) => ({ id: e })),
+            },
+          }),
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not update', 500, err)
+      })
+
+    return updatedItem
+  }
 
   async adminRemove(id: string) {
     const deletedItem = await this.prisma.order
@@ -79,10 +125,13 @@ export class OrdersService {
         throw new HandleException('Could not create.', 400, err)
       })
 
+    const suggestedStructure = await this.structureService.suggestStructure(data)
+
     return {
       status: 'SUCCESS',
       message: 'order created successfully',
       id: createdItem.id,
+      suggestedStructure,
     }
   }
 
@@ -116,9 +165,13 @@ export class OrdersService {
         throw new HandleException('Could not update', 500, err)
       })
 
+    const suggestedStructure = await this.structureService.suggestStructure(data)
+
     return {
       status: 'SUCCESS',
+      message: 'order updated successfully',
       id: updatedItem.id,
+      suggestedStructure,
     }
   }
 

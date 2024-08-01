@@ -3,6 +3,7 @@ import { StructureApplications } from '@prisma/client'
 import { Type } from 'class-transformer'
 import {
   ArrayNotEmpty,
+  ArrayUnique,
   IsArray,
   IsDefined,
   IsEnum,
@@ -32,8 +33,12 @@ export class IsValidProvince implements ValidatorConstraintInterface {
 }
 
 export class CreateStructureDto {
-  @IsEnum(StructureApplications)
-  application: StructureApplications
+  @IsEnum(StructureApplications, { each: true })
+  @ArrayUnique()
+  @IsDefined({ each: true })
+  @ArrayNotEmpty()
+  @IsArray()
+  application: StructureApplications[]
 
   @IsPositive()
   @IsInt()

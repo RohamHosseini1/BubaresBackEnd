@@ -22,12 +22,10 @@ export class AdminCreateOrderDto {
 
   @IsPositive()
   @IsInt()
-  @IsOptional()
   floorsNumber: number
 
   @IsPositive()
   @IsInt()
-  @IsOptional()
   size: number
 
   @Validate(IsValidProvince)
@@ -40,8 +38,7 @@ export class AdminCreateOrderDto {
 
   @IsString()
   @IsDefined()
-  @IsOptional()
-  facadeTitle?: string
+  facadeTitle: string
 
   @IsInt({ each: true })
   @IsDefined({ each: true })
@@ -52,8 +49,7 @@ export class AdminCreateOrderDto {
 
   @MinLength(3)
   @IsString()
-  @IsOptional()
-  name?: string
+  name: string
 
   @IsEmail()
   @MinLength(5)
@@ -63,8 +59,7 @@ export class AdminCreateOrderDto {
 
   @MinLength(3)
   @IsString()
-  @IsOptional()
-  city?: string
+  city: string
 
   @MinLength(3)
   @IsString()

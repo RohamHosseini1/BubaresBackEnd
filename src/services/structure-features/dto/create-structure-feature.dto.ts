@@ -10,6 +10,11 @@ export class CreateStructureFeatureDto {
   @IsString()
   title: string
 
+  @MinLength(10)
+  @IsString()
+  @IsOptional()
+  description?: string
+
   @IsPositive()
   @IsNumber()
   unitPrice: number
