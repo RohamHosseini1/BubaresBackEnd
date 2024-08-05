@@ -69,5 +69,10 @@ export class AdminCreateOrderDto {
   @MinLength(3)
   @IsString()
   @IsOptional()
+  description?: string
+
+  @MinLength(3)
+  @IsString()
+  @IsOptional()
   neighborhood?: string
 }

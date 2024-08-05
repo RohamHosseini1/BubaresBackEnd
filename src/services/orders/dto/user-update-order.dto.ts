@@ -38,4 +38,9 @@ export class UserUpdateOrderDto {
   @IsString()
   @IsOptional()
   neighborhood?: string
+
+  @MinLength(3)
+  @IsString()
+  @IsOptional()
+  description?: string
 }

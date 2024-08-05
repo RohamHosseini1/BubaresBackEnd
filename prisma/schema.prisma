@@ -258,6 +258,7 @@ model Order {
   neighborhood      String?
   facadeTitle       String?
   facadeId          Int?
+  description       String?               @db.Text
   structureFeatures StructureFeature[]
   status            OrderStatus           @default(PENDING)
 
