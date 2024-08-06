@@ -15,7 +15,7 @@ export class BlogPostsService {
   ) {}
 
   async create(data: CreateBlogPostDto) {
-    const createdItem = await this.prisma.blogPost
+    await this.prisma.blogPost
       .create({
         data: {
           ...excludeFromObject(data, ['authorId', 'categories']),
@@ -45,7 +45,9 @@ export class BlogPostsService {
         throw new HandleException('Could not create.', 400, err)
       })
 
-    return createdItem
+    return {
+      message: 'Blog post created successfully.',
+    }
   }
 
   async findAll(paginateOptions: PaginateOptions) {
@@ -97,6 +99,8 @@ export class BlogPostsService {
   }
 
   async update(id: number, data: UpdateBlogPostDto) {
+    const metaData: Record<string, number | boolean> = {}
+
     if (data.thumbnail || data.body) {
       const foundItem = await this.prisma.blogPost
         .findUniqueOrThrow({
@@ -109,11 +113,24 @@ export class BlogPostsService {
         })
 
       if (data.thumbnail) {
-        if (foundItem.thumbnail !== data.thumbnail) this.s3Client.deleteObject(foundItem.thumbnail)
+        if (foundItem.thumbnail !== data.thumbnail) {
+          this.s3Client.deleteObject(foundItem.thumbnail)
+          metaData.oldThumbnailDeleted = true
+        }
+      }
+
+      if (data.body) {
+        const oldBodyImageKeys = Array.from(foundItem.body.matchAll(/\/blog-images\/[^"']+/g), (match) => match[0])
+        const newBodyImageKeys = Array.from(data.body.matchAll(/\/blog-images\/[^"']+/g), (match) => match[0])
+
+        const imagesToBeDeleted = oldBodyImageKeys.filter((item) => !newBodyImageKeys.includes(item))
+        Promise.allSettled(imagesToBeDeleted.map((e) => this.s3Client.deleteObject(e))).then()
+
+        metaData.oldBodyImagesDeletedCount = imagesToBeDeleted.length
       }
     }
 
-    const updatedItem = await this.prisma.blogPost
+    await this.prisma.blogPost
       .update({
         where: {
           id,
@@ -152,7 +169,10 @@ export class BlogPostsService {
         throw new HandleException('Could not update.', 400, err)
       })
 
-    return updatedItem
+    return {
+      message: 'Blog post updated successfully',
+      metaData,
+    }
   }
 
   async remove(id: number) {
@@ -170,10 +190,10 @@ export class BlogPostsService {
     const bodyImageKeys = Array.from(foundItem.body.matchAll(/\/blog-images\/[^"']+/g), (match) => match[0])
     const imagesToBeDeleted = [foundItem.thumbnail, ...bodyImageKeys]
 
-    await Promise.all(imagesToBeDeleted.map((e) => this.s3Client.deleteObject(e)))
+    Promise.allSettled(imagesToBeDeleted.map((e) => this.s3Client.deleteObject(e))).then()
 
     // delete the blog
-    const deletedItem = await this.prisma.blogPost
+    await this.prisma.blogPost
       .delete({
         where: {
           id,
@@ -183,6 +203,9 @@ export class BlogPostsService {
         throw new HandleException('Could not delete', 500, err)
       })
 
-    return deletedItem
+    return {
+      message: 'Blog post deleted successfully',
+      imagesDeletedCount: imagesToBeDeleted.length,
+    }
   }
 }
