@@ -30,7 +30,7 @@ export class BlogPostsController {
   }
 
   @ApiOperation({ summary: 'Getting the upload link of a Blog Image (blog thumbnail or body images)' })
-  @Get('upload-facade-data-url')
+  @Get('upload-blog-image-url')
   @UseGuards(IsAdminGuard)
   getUploadBlogImageUrl() {
     return this.s3Client.getUploadBlogImageUrl()

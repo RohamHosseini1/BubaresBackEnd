@@ -96,8 +96,63 @@ export class BlogPostsService {
     return foundItem
   }
 
-  update(id: number, updateBlogPostDto: UpdateBlogPostDto) {
-    return `This action updates a #${id} blogPost`
+  async update(id: number, data: UpdateBlogPostDto) {
+    if (data.thumbnail || data.body) {
+      const foundItem = await this.prisma.blogPost
+        .findUniqueOrThrow({
+          where: {
+            id,
+          },
+        })
+        .catch((err) => {
+          throw new HandleException('No blog post found with the given id.', 400, err)
+        })
+
+      if (data.thumbnail) {
+        if (foundItem.thumbnail !== data.thumbnail) this.s3Client.deleteObject(foundItem.thumbnail)
+      }
+    }
+
+    const updatedItem = await this.prisma.blogPost
+      .update({
+        where: {
+          id,
+        },
+
+        data: {
+          ...excludeFromObject(data, ['authorId', 'categories']),
+
+          ...(data.authorId && {
+            author: {
+              connect: {
+                id: data.authorId,
+              },
+            },
+          }),
+
+          ...(data.categories && {
+            categories: {
+              connectOrCreate: data.categories.map((e) => ({
+                where: {
+                  title: e,
+                },
+                create: {
+                  title: e,
+                },
+              })),
+            },
+          }),
+        },
+
+        omit: {
+          body: true,
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not update.', 400, err)
+      })
+
+    return updatedItem
   }
 
   async remove(id: number) {
