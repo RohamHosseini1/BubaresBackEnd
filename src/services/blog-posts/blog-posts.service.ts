@@ -167,7 +167,8 @@ export class BlogPostsService {
       })
 
     // delete images from s3 bucket
-    const imagesToBeDeleted = [foundItem.thumbnail]
+    const bodyImageKeys = Array.from(foundItem.body.matchAll(/\/blog-images\/[^"']+/g), (match) => match[0])
+    const imagesToBeDeleted = [foundItem.thumbnail, ...bodyImageKeys]
 
     await Promise.all(imagesToBeDeleted.map((e) => this.s3Client.deleteObject(e)))
 
