@@ -42,6 +42,27 @@ export class S3ClientService {
     }
   }
 
+  async deleteObject(key: string) {
+    const params = {
+      Bucket: PUBLIC_BUCKET_NAME,
+      Key: key,
+    }
+
+    try {
+    } catch (err) {
+      try {
+        await this.s3Client.send(new DeleteObjectCommand(params))
+      } catch (error) {
+        throw new HandleException('Could not delete the object.', 500, err)
+      }
+    }
+
+    return {
+      status: 'SUCCESS',
+      deletedFile: key,
+    }
+  }
+
   async getUploadBlogImageUrl() {
     const imageKey = BLOG_IMAGE_FOLDER_NAME + uuidv4() + '.png'
 

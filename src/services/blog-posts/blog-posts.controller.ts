@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common'
 import { BlogPostsService } from './blog-posts.service'
 import { CreateBlogPostDto } from './dto/create-blog-post.dto'
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto'
@@ -6,6 +6,7 @@ import { IsAdminGuard } from 'src/guards/is-admin.guard'
 import { ApiOperation } from '@nestjs/swagger'
 import { S3ClientService } from '../s3-client/s3-client.service'
 import { HandleException } from 'helpers/handle.exception'
+import { Public } from 'src/guards/auth.guard'
 
 @Controller('blog-posts')
 export class BlogPostsController {
@@ -21,8 +22,11 @@ export class BlogPostsController {
   }
 
   @Get()
-  findAll() {
-    return this.blogPostsService.findAll()
+  @Public()
+  findAll(@Query('page') page: string, @Query('perPage') perPage: string) {
+    const paginateOptions = { page, perPage }
+
+    return this.blogPostsService.findAll(paginateOptions)
   }
 
   @ApiOperation({ summary: 'Getting the upload link of a Blog Image (blog thumbnail or body images)' })
@@ -32,7 +36,8 @@ export class BlogPostsController {
     return this.s3Client.getUploadBlogImageUrl()
   }
 
-  @Get('/find-by-slug')
+  @Get('find-by-slug')
+  @Public()
   findBySlug(@Body() input: { slug: string }) {
     if (!input.slug) return new HandleException('Property `slug` must be present.')
 

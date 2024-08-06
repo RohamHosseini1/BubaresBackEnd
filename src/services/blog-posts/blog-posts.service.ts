@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { CreateBlogPostDto } from './dto/create-blog-post.dto'
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
 import { HandleException } from 'helpers/handle.exception'
 import { excludeFromObject } from 'helpers/utils'
-import { Prisma } from '@prisma/client'
+import { BlogPost, Prisma } from '@prisma/client'
+import { S3ClientService } from '../s3-client/s3-client.service'
 
 @Injectable()
 export class BlogPostsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly s3Client: S3ClientService,
+  ) {}
 
   async create(data: CreateBlogPostDto) {
     const createdItem = await this.prisma.blogPost
@@ -44,8 +48,8 @@ export class BlogPostsService {
     return createdItem
   }
 
-  async findAll() {
-    return await this.prisma.blogPost.findMany({
+  async findAll(paginateOptions: PaginateOptions) {
+    const findManyArgs: Prisma.BlogPostFindManyArgs = {
       omit: {
         body: true,
       },
@@ -56,7 +60,15 @@ export class BlogPostsService {
           },
         },
       },
-    })
+    }
+
+    // with pagination
+    if (paginateOptions.page || paginateOptions.perPage)
+      return PrismaService.paginate<BlogPost>(this.prisma.blogPost, paginateOptions, findManyArgs)
+
+    // without pagination
+    findManyArgs.take = 20
+    return await this.prisma.blogPost.findMany(findManyArgs)
   }
 
   async findOne(key: string, mode: 'ID' | 'SLUG' = 'SLUG') {
@@ -88,7 +100,33 @@ export class BlogPostsService {
     return `This action updates a #${id} blogPost`
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} blogPost`
+  async remove(id: number) {
+    const foundItem = await this.prisma.blogPost
+      .findUniqueOrThrow({
+        where: {
+          id,
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('No blog found with the given id.', 404, err)
+      })
+
+    // delete images from s3 bucket
+    const imagesToBeDeleted = [foundItem.thumbnail]
+
+    await Promise.all(imagesToBeDeleted.map((e) => this.s3Client.deleteObject(e)))
+
+    // delete the blog
+    const deletedItem = await this.prisma.blogPost
+      .delete({
+        where: {
+          id,
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('Could not delete', 500, err)
+      })
+
+    return deletedItem
   }
 }
