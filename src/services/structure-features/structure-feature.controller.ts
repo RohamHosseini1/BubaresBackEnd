@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
 import { StructureFeatureService } from './structure-feature.service'
 import { CreateStructureFeatureDto } from './dto/create-structure-feature.dto'
 import { UpdateStructureFeatureDto } from './dto/update-structure-features.dto'
@@ -21,8 +21,10 @@ export class StructureFeatureController {
   }
 
   @Get()
-  findAll() {
-    return this.structureFeatureService.findAll()
+  findAll(@Query('page') page: string, @Query('perPage') perPage: string) {
+    const paginateOptions = { page, perPage }
+
+    return this.structureFeatureService.findAll(paginateOptions)
   }
 
   @Patch(':id')

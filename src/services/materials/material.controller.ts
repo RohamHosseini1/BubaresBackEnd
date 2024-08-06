@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
 import { MaterialService } from './material.service'
 import { CreateMaterialDto } from './dto/create-material.dto'
 import { UpdateMaterialDto } from './dto/update-material.dto'
@@ -21,8 +21,10 @@ export class MaterialController {
   }
 
   @Get()
-  findAll() {
-    return this.materialService.findAll()
+  findAll(@Query('page') page: string, @Query('perPage') perPage: string) {
+    const paginateOptions = { page, perPage }
+
+    return this.materialService.findAll(paginateOptions)
   }
 
   @Patch(':id')

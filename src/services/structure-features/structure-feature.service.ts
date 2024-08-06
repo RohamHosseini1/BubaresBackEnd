@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { HandleException } from 'helpers/handle.exception'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
 import { CreateStructureFeatureDto } from './dto/create-structure-feature.dto'
 import { UpdateStructureFeatureDto } from './dto/update-structure-features.dto'
 import { isEqual } from 'lodash'
+import { Prisma, StructureFeature } from '@prisma/client'
 
 @Injectable()
 export class StructureFeatureService {
@@ -24,7 +25,7 @@ export class StructureFeatureService {
   }
 
   async bulkCreate(data: CreateStructureFeatureDto[]) {
-    const currentItems = await this.findAll()
+    const currentItems = await this.prisma.structureFeature.findMany()
     let createdRecords = 0
     let updatedRecords = 0
 
@@ -57,8 +58,16 @@ export class StructureFeatureService {
     return { status: 'SUCCESS', createdRecords, updatedRecords }
   }
 
-  async findAll() {
-    return await this.prisma.structureFeature.findMany()
+  async findAll(paginateOptions?: PaginateOptions | undefined) {
+    const findManyArgs: Prisma.StructureFeatureFindManyArgs = {}
+
+    // with pagination
+    if (paginateOptions?.page || paginateOptions?.perPage)
+      return PrismaService.paginate<StructureFeature>(this.prisma.structureFeature, paginateOptions, findManyArgs)
+
+    // without pagination
+    findManyArgs.take = 20
+    return await this.prisma.structureFeature.findMany(findManyArgs)
   }
 
   async update(id: number, data: UpdateStructureFeatureDto) {

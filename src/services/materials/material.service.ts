@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { HandleException } from 'helpers/handle.exception'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PaginateOptions, PrismaService } from 'src/prisma/prisma.service'
 import { CreateMaterialDto } from './dto/create-material.dto'
 import { UpdateMaterialDto } from './dto/update-material.dto'
 import isEqual from 'lodash/isEqual'
+import { Material, Prisma } from '@prisma/client'
 
 @Injectable()
 export class MaterialService {
@@ -24,7 +25,7 @@ export class MaterialService {
   }
 
   async bulkCreate(data: CreateMaterialDto[]) {
-    const currentItems = await this.findAll()
+    const currentItems = await this.prisma.material.findMany()
     let createdRecords = 0
     let updatedRecords = 0
 
@@ -57,8 +58,16 @@ export class MaterialService {
     return { status: 'SUCCESS', createdRecords, updatedRecords }
   }
 
-  async findAll() {
-    return await this.prisma.material.findMany()
+  async findAll(paginateOptions: PaginateOptions) {
+    const findManyArgs: Prisma.MaterialFindManyArgs = {}
+
+    // with pagination
+    if (paginateOptions.page || paginateOptions.perPage)
+      return PrismaService.paginate<Material>(this.prisma.material, paginateOptions, findManyArgs)
+
+    // without pagination
+    findManyArgs.take = 20
+    return await this.prisma.material.findMany(findManyArgs)
   }
 
   async update(id: number, data: UpdateMaterialDto) {
