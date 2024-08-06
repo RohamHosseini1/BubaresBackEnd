@@ -12,7 +12,7 @@ import {
   Validate,
 } from 'class-validator'
 import { iranProvincesList } from 'constants/iranProvinces'
-import { IsValidProvince } from 'src/services/structures/dto/create-structure.dto'
+import { IsValidProvince } from 'helpers/custom-validators'
 
 export class UserCreateOrderDto {
   @IsEnum(StructureApplications)

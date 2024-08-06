@@ -1,4 +1,3 @@
-import { iranProvincesList } from 'constants/iranProvinces'
 import { StructureApplications } from '@prisma/client'
 import { Type } from 'class-transformer'
 import {
@@ -16,21 +15,9 @@ import {
   MinLength,
   Validate,
   ValidateNested,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
 } from 'class-validator'
-
-@ValidatorConstraint({ name: 'is-valid-province', async: false })
-export class IsValidProvince implements ValidatorConstraintInterface {
-  validate(input: { provinceId: string }) {
-    return !!iranProvincesList.find((e) => input.provinceId === e.provinceId)
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `${args.property} must be a valid province object`
-  }
-}
+import { iranProvincesList } from 'constants/iranProvinces'
+import { IsValidProvince } from 'helpers/custom-validators'
 
 export class CreateStructureDto {
   @IsEnum(StructureApplications, { each: true })

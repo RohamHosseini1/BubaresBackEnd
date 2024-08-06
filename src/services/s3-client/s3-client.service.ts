@@ -7,6 +7,7 @@ import { HandleException } from 'helpers/handle.exception'
 const PUBLIC_BUCKET_NAME = 'bubares'
 const FACADE_MODELS_FOLDER_NAME = '/facade-models/'
 const FACADE_THUMBNAIL_FOLDER_NAME = '/facade-thumbnails/'
+const BLOG_IMAGE_FOLDER_NAME = '/blog-images/'
 
 @Injectable()
 export class S3ClientService {
@@ -21,6 +22,50 @@ export class S3ClientService {
         secretAccessKey: process.env.LIARA_SECRET_KEY,
       },
     })
+  }
+
+  async uploadObject(file: string, key: string) {
+    const params = {
+      Body: file,
+      Bucket: process.env.LIARA_BUCKET_NAME,
+      Key: key,
+    }
+
+    try {
+      await this.s3Client.send(new PutObjectCommand(params))
+    } catch (_) {
+      try {
+        await this.s3Client.send(new PutObjectCommand(params))
+      } catch (err) {
+        throw new HandleException('Failed to upload data to bucket.', 500, err)
+      }
+    }
+  }
+
+  async getUploadBlogImageUrl() {
+    const imageKey = BLOG_IMAGE_FOLDER_NAME + uuidv4() + '.png'
+
+    const uploadUrl = await getSignedUrl(
+      this.s3Client,
+      new PutObjectCommand({
+        Bucket: PUBLIC_BUCKET_NAME,
+        Key: imageKey,
+        ContentType: 'image/png',
+      }),
+      {
+        expiresIn: 3600, // in seconds
+      },
+    )
+
+    return {
+      uploadUrl,
+      key: imageKey,
+      allowedFile: {
+        extension: '.png',
+        contentType: 'image/png',
+      },
+      expiresInSeconds: 3600,
+    }
   }
 
   async getUploadFacadeDataUrl() {

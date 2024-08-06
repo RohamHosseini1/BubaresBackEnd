@@ -4,17 +4,18 @@ import { JwtModule } from '@nestjs/jwt'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
+import { AuthGuard } from './guards/auth.guard'
+import { ResponseLoggerInterceptor } from './services/my-logger/my-logger.service'
+
 // modules
 import { PrismaModule } from './prisma/prisma.module'
-import { AttachmentsModule } from './services/attachments/attachments.module'
 import { FaqModule } from './services/faqs/faq.module'
 import { MaterialModule } from './services/materials/material.module'
-import { ResponseLoggerInterceptor } from './services/my-logger/my-logger.service'
 import { StructureFeatureModule } from './services/structure-features/structure-feature.module'
 import { StructureModule } from './services/structures/structure.module'
 import { UsersModule } from './services/users/users.module'
 import { FacadesModule } from './services/facades/facades.module'
-import { AuthGuard } from './guards/auth.guard'
+import { BlogPostsModule } from './services/blog-posts/blog-posts.module'
 
 @Module({
   imports: [
@@ -27,13 +28,12 @@ import { AuthGuard } from './guards/auth.guard'
     }),
     PrismaModule,
     UsersModule,
-    AttachmentsModule,
     FaqModule,
     MaterialModule,
     StructureFeatureModule,
     StructureModule,
     FacadesModule,
-    // AlarmRulesModule,
+    BlogPostsModule,
   ],
   controllers: [AppController],
   providers: [

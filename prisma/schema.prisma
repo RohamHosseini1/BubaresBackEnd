@@ -34,22 +34,6 @@ enum Role {
 
 // END: User model -----------------------------------------------------------------------------------
 
-// START: Attachment model -----------------------------------------------------------------------------------
-model Attachment {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-
-  key                 String
-  originalName        String
-  mimeType            String
-  retaledBlogPostId   Int?
-  blogPostThumbnailId Int?   @unique
-
-  BlogPostThumnbail BlogPost? @relation(fields: [blogPostThumbnailId], references: [id])
-}
-
-// END: Attachment model -----------------------------------------------------------------------------------
-
 // START: Log model -------------------------------------------------------------------------------------
 model Log {
   id        Int      @id @default(autoincrement())
@@ -217,14 +201,14 @@ model BlogPost {
   title      String
   shortBody  String
   body       String  @db.Text
-  userId     Int
+  authorId   Int
+  thumbnail  String?
   ctaText    String?
   ctaBtnText String?
   ctaBtnHref String?
 
-  thumbnail      Attachment?
-  author         User           @relation(fields: [userId], references: [id])
-  blogCategories BlogCategory[]
+  author     User           @relation(fields: [authorId], references: [id])
+  categories BlogCategory[]
 }
 
 // END: BlogPost model -----------------------------------------------------------------------------------
