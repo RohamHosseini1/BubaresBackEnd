@@ -6,9 +6,9 @@ import { ApiOperation } from '@nestjs/swagger'
 import { S3ClientService } from '../s3-client/s3-client.service'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
 import { HandleException } from 'helpers/handle.exception'
+import { Public } from 'src/guards/auth.guard'
 
 @Controller('structures')
-@UseGuards(IsAdminGuard)
 export class StructureController {
   constructor(
     private readonly structureService: StructureService,
@@ -16,15 +16,23 @@ export class StructureController {
   ) {}
 
   @Post()
+  @UseGuards(IsAdminGuard)
   create(@Body() input: CreateStructureDto) {
     return this.structureService.create(input)
   }
 
   @Get()
+  @UseGuards(IsAdminGuard)
   findAll(@Query('page') page: string, @Query('perPage') perPage: string) {
     const paginateOptions = { page, perPage }
 
     return this.structureService.findAll(paginateOptions)
+  }
+
+  @Get('random-by-application')
+  @Public()
+  getRandomByApplication() {
+    return this.structureService.getRandomByApplication()
   }
 
   @ApiOperation({ summary: 'Getting the upload link of both 3d model and its thumbnail to the s3 bucket' })
@@ -46,16 +54,19 @@ export class StructureController {
   }
 
   @Get(':id')
+  @UseGuards(IsAdminGuard)
   findOne(@Param('id') id: string) {
     return this.structureService.findOne(+id)
   }
 
   @Patch(':id')
+  @UseGuards(IsAdminGuard)
   update(@Param('id') id: string, @Body() input: UpdateStructureDto) {
     return this.structureService.update(+id, input)
   }
 
   @Delete(':id')
+  @UseGuards(IsAdminGuard)
   remove(@Param('id') id: string) {
     return this.structureService.remove(+id)
   }

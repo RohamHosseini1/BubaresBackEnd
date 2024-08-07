@@ -114,6 +114,46 @@ export class StructureService {
     return paginatedResult
   }
 
+  async getRandomByApplication() {
+    const allStructures = await this.prisma.structure.findMany({
+      select: {
+        application: true,
+        facades: {
+          select: {
+            thumbnailKey: true,
+            color: true,
+            title: true,
+          },
+        },
+      },
+    })
+
+    const applicationMapper: Record<StructureApplications | string, typeof allStructures> = allStructures.reduce(
+      (acc, e) => {
+        const applications = e.application as string[]
+        applications.forEach((app) => {
+          if (!acc[app]) acc[app] = [e]
+          else acc[app].push(e)
+        })
+
+        return acc
+      },
+      {},
+    )
+
+    const result: Record<StructureApplications | string, (typeof allStructures)[number] | []> = {}
+    for (const application in applicationMapper) {
+      if (Object.prototype.hasOwnProperty.call(applicationMapper, application)) {
+        const structuresArr = applicationMapper[application]
+
+        if (structuresArr.length === 0) result[application] = []
+        else result[application] = structuresArr[Math.round(Math.random() * structuresArr.length) - 1]
+      }
+    }
+
+    return result
+  }
+
   async handleUpdateStructureMaterials(item: Awaited<ReturnType<typeof this.findOne>>, data: UpdateStructureDto) {
     const { materials: currentMaterials, id: currentStructureId } = item
     const { materials: incomingMaterials } = data
