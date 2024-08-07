@@ -162,7 +162,7 @@ export class OrdersService {
         },
       })
       .catch((err) => {
-        throw new HandleException('Could not update', 500, err)
+        throw new HandleException('Could not update', 400, err)
       })
 
     const suggestedStructure = await this.structureService.suggestStructure(data)
