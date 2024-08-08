@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
   Validate,
@@ -84,8 +85,8 @@ class MaterialDto {
 }
 
 class FacadeDto {
-  @IsPositive()
-  @IsInt()
+  @IsUUID()
+  @IsString()
   @IsOptional()
   id?: string
 
