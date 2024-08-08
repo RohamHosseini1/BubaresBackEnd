@@ -22,7 +22,7 @@ export class StructureService {
   async suggestStructure(data: Partial<UserCreateOrderDto & UserUpdateOrderDto>) {
     let result = await this.prisma.structure.findMany({
       include: {
-        facades: { select: { id: true, thumbnailKey: true, modelKey: true } },
+        facades: { select: { id: true, thumbnailKey: true, modelKey: true, title: true, color: true } },
         structureFeatures: { omit: { id: true, createdAt: true, updatedAt: true } },
         materials: { select: { quantity: true, material: { select: { unitPrice: true, title: true } } } },
       },
@@ -120,6 +120,7 @@ export class StructureService {
         application: true,
         facades: {
           select: {
+            id: true,
             thumbnailKey: true,
             color: true,
             title: true,

@@ -87,7 +87,7 @@ class FacadeDto {
   @IsPositive()
   @IsInt()
   @IsOptional()
-  id?: number
+  id?: string
 
   @MaxLength(7)
   @MinLength(6)

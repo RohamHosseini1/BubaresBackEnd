@@ -29,7 +29,21 @@ export class FacadesService {
     return foundFacade
   }
 
-  async remove(id: number) {
+  async findOne(id: string) {
+    const foundFacade = this.prisma.facade
+      .findUniqueOrThrow({
+        where: {
+          id: id as any,
+        },
+      })
+      .catch((err) => {
+        throw new HandleException('No Facade found with the given id.', 404, err)
+      })
+
+    return foundFacade
+  }
+
+  async remove(id: string) {
     const deletedItem = await this.prisma.facade
       .delete({
         where: {
@@ -40,20 +54,22 @@ export class FacadesService {
         throw new HandleException('Could not delete', 500, err)
       })
 
-    this.s3ClientService.deleteFacadeData(
-      {
-        type: 'MODEL',
-        key: deletedItem.modelKey,
-      },
-      false,
-    )
-    this.s3ClientService.deleteFacadeData(
-      {
-        type: 'THUMBNAIL',
-        key: deletedItem.thumbnailKey,
-      },
-      false,
-    )
+    Promise.allSettled([
+      this.s3ClientService.deleteFacadeData(
+        {
+          type: 'MODEL',
+          key: deletedItem.modelKey,
+        },
+        false,
+      ),
+      this.s3ClientService.deleteFacadeData(
+        {
+          type: 'THUMBNAIL',
+          key: deletedItem.thumbnailKey,
+        },
+        false,
+      ),
+    ]).then()
 
     return `This action removes a #${id} facade`
   }

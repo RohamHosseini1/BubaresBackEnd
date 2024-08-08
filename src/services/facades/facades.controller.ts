@@ -14,8 +14,14 @@ export class FacadeController {
     return this.facadeService.getRandomFacade()
   }
 
+  @Get(':id')
+  @Public()
+  findOne(@Param('id') id: string) {
+    return this.facadeService.findOne(id)
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.facadeService.remove(+id)
+    return this.facadeService.remove(id)
   }
 }
