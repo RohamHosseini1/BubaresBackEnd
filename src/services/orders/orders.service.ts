@@ -152,7 +152,7 @@ export class OrdersService {
           id,
         },
         data: {
-          ...data,
+          ...excludeFromObject(data, ['email', 'name']),
 
           ...(data.structureFeatures && {
             structureFeatures: {
@@ -164,6 +164,26 @@ export class OrdersService {
       .catch((err) => {
         throw new HandleException('Could not update', 400, err)
       })
+
+    const foundUser = await this.prisma.user.findUnique({
+      where: {
+        id: updatedItem.userId,
+      },
+    })
+
+    if (foundUser) {
+      await this.prisma.user
+        .update({
+          where: {
+            id: updatedItem.userId,
+          },
+          data: {
+            name: data.name,
+            email: foundUser.email || data.email,
+          },
+        })
+        .catch(() => {})
+    }
 
     const suggestedStructure = await this.structureService.suggestStructure(data)
 

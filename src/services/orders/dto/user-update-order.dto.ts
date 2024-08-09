@@ -16,7 +16,7 @@ export class UserUpdateOrderDto {
   @MinLength(3)
   @IsString()
   @IsOptional()
-  name?: string
+  name: string
 
   @IsEmail()
   @MinLength(5)
