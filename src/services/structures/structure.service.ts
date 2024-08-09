@@ -23,7 +23,7 @@ export class StructureService {
     let result = await this.prisma.structure.findMany({
       include: {
         facades: { select: { id: true, thumbnailKey: true, modelKey: true, title: true, color: true } },
-        structureFeatures: { omit: { id: true, createdAt: true, updatedAt: true } },
+        structureFeatures: { omit: { createdAt: true, updatedAt: true } },
         materials: { select: { quantity: true, material: { select: { unitPrice: true, title: true } } } },
       },
     })
