@@ -17,6 +17,7 @@ import { UsersModule } from './services/users/users.module'
 import { FacadesModule } from './services/facades/facades.module'
 import { BlogPostsModule } from './services/blog-posts/blog-posts.module'
 import { OrderModule } from './services/orders/orders.module'
+import { BlogCategoriesModule } from './services/blog-categories/blog-categories.module'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OrderModule } from './services/orders/orders.module'
     StructureModule,
     FacadesModule,
     BlogPostsModule,
+    BlogCategoriesModule,
     OrderModule,
   ],
   controllers: [AppController],

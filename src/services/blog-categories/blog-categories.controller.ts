@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { Public } from 'src/guards/auth.guard'
 import { BlogCategoriesService } from './blog-categories.service'
 
-@Controller('blogCategories')
+@Controller('blog-categories')
 export class BlogCategoriesController {
   constructor(private readonly blogCategoriesService: BlogCategoriesService) {}
 
