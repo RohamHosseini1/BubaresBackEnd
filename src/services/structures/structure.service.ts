@@ -28,7 +28,7 @@ export class StructureService {
       },
     })
 
-    const fallbackStructure = result[Math.round(Math.random() * (result.length - 1))]
+    const fallbackStructure = result[Math.floor(Math.random() * result.length)]
 
     if (data.application) {
       const filtered = result.filter((e) => (e.application as StructureApplications[]).includes(data.application))
@@ -47,7 +47,7 @@ export class StructureService {
 
     if (result.length === 0) return fallbackStructure
     if (result.length === 1) return result[0]
-    if (result.length > 1) return result[Math.round(Math.random() * (result.length - 1))]
+    if (result.length > 1) return result[Math.floor(Math.random() * result.length)]
 
     return new HandleException('Something went wrong!', 500)
   }
@@ -142,13 +142,14 @@ export class StructureService {
       {},
     )
 
-    const result: Record<StructureApplications | string, (typeof allStructures)[number] | []> = {}
+    const result: Record<StructureApplications | string, (typeof allStructures)[number] | Record<string, never>> = {}
     for (const application in applicationMapper) {
       if (Object.prototype.hasOwnProperty.call(applicationMapper, application)) {
         const structuresArr = applicationMapper[application]
 
-        if (structuresArr.length === 0) result[application] = []
-        else result[application] = structuresArr[Math.round(Math.random() * structuresArr.length) - 1]
+        if (structuresArr.length === 0) result[application] = {}
+        else if (structuresArr.length === 1) result[application] = structuresArr[0]
+        else result[application] = structuresArr[Math.floor(Math.random() * structuresArr.length)]
       }
     }
 

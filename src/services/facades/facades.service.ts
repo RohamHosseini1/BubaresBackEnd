@@ -15,7 +15,7 @@ export class FacadesService {
 
     if (facadesCount === 0) throw new HandleException('No facades available.', 404)
 
-    const randomSkip = Math.round(Math.random() * (facadesCount - 1))
+    const randomSkip = Math.floor(Math.random() * facadesCount)
 
     const foundFacade = this.prisma.facade
       .findMany({
