@@ -36,7 +36,7 @@ export class BlogPostsController {
     return this.s3Client.getUploadBlogImageUrl()
   }
 
-  @Get('find-by-slug')
+  @Post('find-by-slug')
   @Public()
   findBySlug(@Body() input: { slug: string }) {
     if (!input.slug) return new HandleException('Property `slug` must be present.')
