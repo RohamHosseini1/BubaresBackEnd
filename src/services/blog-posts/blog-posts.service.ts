@@ -100,6 +100,9 @@ export class BlogPostsService {
           },
         },
       },
+      omit: {
+        authorId: true,
+      },
     })
 
     return foundItem

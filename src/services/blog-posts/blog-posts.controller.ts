@@ -36,12 +36,12 @@ export class BlogPostsController {
     return this.s3Client.getUploadBlogImageUrl()
   }
 
-  @Post('find-by-slug')
+  @Get('find-by-slug/:slug')
   @Public()
-  findBySlug(@Body() input: { slug: string }) {
-    if (!input.slug) return new HandleException('Property `slug` must be present.')
+  findBySlug(@Param('slug') slug: string) {
+    if (!slug) return new HandleException('`slug` must be present.')
 
-    return this.blogPostsService.findOne(input.slug, 'SLUG')
+    return this.blogPostsService.findOne(decodeURI(slug), 'SLUG')
   }
 
   @Get(':id')
