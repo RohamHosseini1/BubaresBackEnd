@@ -9,17 +9,25 @@ export class UpdateUserDto {
 
   @MinLength(3)
   @IsString()
+  @IsOptional()
   name: string
 
   @MaxLength(11)
   @MinLength(11)
   @IsString()
-  phone: string
+  @IsOptional()
+  phone?: string
 
   @IsEmail()
   @MinLength(5)
   @IsString()
-  email: string
+  @IsOptional()
+  email?: string
+
+  @MinLength(5)
+  @IsString()
+  @IsOptional()
+  jobTitle?: string
 
   @IsStrongPassword({
     minLength: 8,
@@ -28,5 +36,6 @@ export class UpdateUserDto {
     minNumbers: 1,
     minSymbols: 0,
   })
-  password: string
+  @IsOptional()
+  password?: string
 }

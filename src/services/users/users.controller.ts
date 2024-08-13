@@ -9,6 +9,7 @@ import {
   Patch,
   HttpCode,
   UnauthorizedException,
+  Delete,
 } from '@nestjs/common'
 import { IsAdminGuard } from 'src/guards/is-admin.guard'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -31,9 +32,15 @@ export class UsersController {
   }
 
   @Post()
-  @UseGuards(IsAdminGuard)
+  @UseGuards(IsSuperAdminGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto)
+  }
+
+  @Delete(':id')
+  @UseGuards(IsSuperAdminGuard)
+  delete(@Param('id') id: string) {
+    return this.usersService.delete(+id)
   }
 
   @Get()

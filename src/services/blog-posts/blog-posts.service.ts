@@ -92,6 +92,13 @@ export class BlogPostsService {
             title: true,
           },
         },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            jobTitle: true,
+          },
+        },
       },
     })
 

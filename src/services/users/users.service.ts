@@ -135,4 +135,18 @@ export class UsersService {
       access: accessToken,
     }
   }
+
+  async delete(id: number) {
+    const deletedUser = await this.prisma.user
+      .delete({
+        where: {
+          id,
+        },
+      })
+      .catch(() => {
+        throw new HandleException('Cannot delete user.', 400)
+      })
+
+    return deletedUser
+  }
 }
